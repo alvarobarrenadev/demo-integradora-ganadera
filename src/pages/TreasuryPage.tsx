@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Bar, BarChart, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { useAppStore } from '../store/useAppStore'
 import { PageHeader } from '../components/common/PageHeader'
 import { DataTable, type DataTableColumn } from '../components/common/DataTable'
@@ -59,6 +60,11 @@ function ResumenTab({
 }) {
   const state = useAppStore()
   const daily = selectDailyCashForecast(state, 7)
+  const weeklyChart = weekly.map((item) => ({
+    period: formatDateEs(item.start).slice(0, 5),
+    Cobros: item.receivables,
+    Pagos: item.payments,
+  }))
 
   return (
     <>
@@ -66,6 +72,22 @@ function ResumenTab({
         <div className="kpi-card"><div className="kpi-card__label">Cobros próximos 7 días</div><div className="kpi-card__value">{fmtEUR(receivablesNext7Total)}</div></div>
         <div className="kpi-card"><div className="kpi-card__label">Pagos próximos 7 días</div><div className="kpi-card__value">{fmtEUR(paymentsNext7Total)}</div></div>
         <div className="kpi-card"><div className="kpi-card__label">Neto próximo 7d</div><div className="kpi-card__value">{fmtEUR(netNext7)}</div></div>
+      </div>
+
+      <div className="card mb-4">
+        <div className="section-title">Cobros y pagos previstos por semana</div>
+        <div role="img" aria-label="Comparativa semanal de cobros y pagos previstos">
+          <ResponsiveContainer width="100%" height={240}>
+            <BarChart data={weeklyChart} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+              <XAxis dataKey="period" tick={{ fontSize: 11, fill: 'var(--color-text-muted)' }} tickLine={false} />
+              <YAxis hide />
+              <Tooltip formatter={(value) => fmtEUR(Number(value))} contentStyle={{ fontSize: 12, background: 'var(--color-surface)', border: '1px solid var(--color-border)', color: 'var(--color-text)' }} />
+              <Legend wrapperStyle={{ fontSize: 11 }} />
+              <Bar dataKey="Cobros" fill="var(--color-accent)" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="Pagos" fill="var(--color-warning-strong)" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
       <div className="card mb-4">

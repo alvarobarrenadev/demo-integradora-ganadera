@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Bar, BarChart, Cell, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { useAppStore } from '../store/useAppStore'
 import { PageHeader } from '../components/common/PageHeader'
 import { DataTable, type DataTableColumn } from '../components/common/DataTable'
@@ -97,29 +98,54 @@ function CebaSummary() {
   }, [state.cebas])
 
   return (
-    <div className="grid-2">
-      <div className="card">
-        <div className="section-title">Ranking por conversión (menor = mejor)</div>
-        <div className="kv-list">
-          {ranking.map((r, i) => (
-            <div key={r.ceba.id} className="kv-row">
-              <span className="kv-row__label">{i + 1}. {r.ceba.id} — #{r.ceba.integratedId}</span>
-              <span className="kv-row__value">{r.conversion.toFixed(2)}</span>
-            </div>
-          ))}
+    <>
+      <div className="card mb-4">
+        <div className="section-title">Conversión de cebas cerradas</div>
+        <p className="page-subtitle mb-4">Menor es mejor · objetivo ≤ 2,35 · revisar por encima de 2,45.</p>
+        <div role="img" aria-label="Conversión de las cebas cerradas comparada con los umbrales de rendimiento">
+          <ResponsiveContainer width="100%" height={260}>
+            <BarChart data={ranking.map((item) => ({ id: item.ceba.id, conversion: item.conversion }))} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+              <XAxis dataKey="id" tick={{ fontSize: 11, fill: 'var(--color-text-muted)' }} tickLine={false} />
+              <YAxis domain={[2, 'dataMax + 0.1']} tick={{ fontSize: 10, fill: 'var(--color-text-faint)' }} width={32} />
+              <Tooltip formatter={(value) => Number(value).toFixed(2)} contentStyle={{ fontSize: 12, background: 'var(--color-surface)', border: '1px solid var(--color-border)', color: 'var(--color-text)' }} />
+              <ReferenceLine y={2.35} stroke="var(--color-success)" strokeDasharray="4 4" />
+              <ReferenceLine y={2.45} stroke="var(--color-warning-strong)" strokeDasharray="4 4" />
+              <Bar dataKey="conversion" name="Conversión" radius={[4, 4, 0, 0]}>
+                {ranking.map((item) => (
+                  <Cell
+                    key={item.ceba.id}
+                    fill={item.conversion <= 2.35 ? 'var(--color-success)' : item.conversion <= 2.45 ? 'var(--color-warning-strong)' : 'var(--color-danger)'}
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
-      <div className="card">
-        <div className="section-title">Origen del lechón × pienso</div>
-        <div className="kv-list">
-          {originMatrix.map((row, index) => (
-            <div key={row.key} className="kv-row">
-              <span className="kv-row__label">{index + 1}. {row.key} · {row.count} {row.count === 1 ? 'ceba' : 'cebas'}</span>
-              <span className="kv-row__value">{row.conversion.toFixed(2)}</span>
-            </div>
-          ))}
+      <div className="grid-2">
+        <div className="card">
+          <div className="section-title">Ranking por conversión (menor = mejor)</div>
+          <div className="kv-list">
+            {ranking.map((r, i) => (
+              <div key={r.ceba.id} className="kv-row">
+                <span className="kv-row__label">{i + 1}. {r.ceba.id} — #{r.ceba.integratedId}</span>
+                <span className="kv-row__value">{r.conversion.toFixed(2)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="card">
+          <div className="section-title">Origen del lechón × pienso</div>
+          <div className="kv-list">
+            {originMatrix.map((row, index) => (
+              <div key={row.key} className="kv-row">
+                <span className="kv-row__label">{index + 1}. {row.key} · {row.count} {row.count === 1 ? 'ceba' : 'cebas'}</span>
+                <span className="kv-row__value">{row.conversion.toFixed(2)}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
