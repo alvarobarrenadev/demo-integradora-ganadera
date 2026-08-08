@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'valdeon-gestion-'
-const CACHE_NAME = `${CACHE_PREFIX}v1`
+const CACHE_NAME = `${CACHE_PREFIX}v2`
 const APP_ROOT = new URL('./', self.location.href).pathname
 const PRECACHE = [
   APP_ROOT,
