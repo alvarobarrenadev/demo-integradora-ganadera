@@ -25,6 +25,38 @@
   gap: 8px;
 }
 
+.whatsapp-parser__textarea {
+  width: 100%;
+  min-height: 100px;
+  resize: vertical;
+}
+
+.whatsapp-parser > .page-subtitle {
+  width: 100%;
+  max-width: none;
+}
+
+.whatsapp-parser__proposal {
+  border-top: 1px solid var(--color-border-light);
+  padding-top: 16px;
+}
+
+.whatsapp-parser__fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
+}
+
+.whatsapp-parser__error {
+  color: var(--color-danger);
+  font-weight: 600;
+}
+
+.whatsapp-parser__warning {
+  color: var(--color-warning-strong);
+  font-weight: 600;
+}
+
 @media (max-width: 48rem) {
   .movement-form .field,
   .movement-form__field--narrow,

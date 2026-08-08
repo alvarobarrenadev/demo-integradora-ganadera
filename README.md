@@ -17,6 +17,7 @@ La interfaz es responsive, comienza en modo claro, incluye modo oscuro y puede i
 - Liquidaciones, retenciones, facturas emitidas y generación de PDF.
 - Previsión semanal de cobros y pagos.
 - Gestión de logística, integrados, proveedores, transportistas y alertas DVR.
+- Parser simulado de mensajes de WhatsApp para proponer entradas logísticas revisables.
 - Persistencia local, reinicio reproducible de la demo y funcionamiento offline.
 
 ## Instalación y arranque

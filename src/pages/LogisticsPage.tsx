@@ -3,6 +3,7 @@ import { useAppStore } from '../store/useAppStore'
 import { PageHeader } from '../components/common/PageHeader'
 import { DataTable, type DataTableColumn } from '../components/common/DataTable'
 import { StatusBadge } from '../components/common/StatusBadge'
+import { parseWhatsAppEntry, type WhatsAppEntryProposal } from '../domain/whatsapp'
 import { generateId } from '../utils/ids'
 import { DEMO_REFERENCE_DATE, formatDateEs, fmtNumber } from '../utils/dates'
 import type { LogisticsMovement } from '../types/logistics'
@@ -11,6 +12,7 @@ export function LogisticsPage() {
   const state = useAppStore()
   const addLogisticsMovement = useAppStore((s) => s.addLogisticsMovement)
   const [showForm, setShowForm] = useState(false)
+  const [showWhatsApp, setShowWhatsApp] = useState(false)
 
   const salidas = state.logisticsMovements.filter((m) => m.type === 'salida')
 
@@ -37,12 +39,18 @@ export function LogisticsPage() {
       <PageHeader
         title="Logística"
         actions={
-          <button type="button" className="btn btn-primary" onClick={() => setShowForm((v) => !v)}>
-            {showForm ? 'Cerrar formulario' : '+ Nueva entrada/salida'}
-          </button>
+          <>
+            <button type="button" className="btn btn-secondary" onClick={() => setShowWhatsApp((value) => !value)}>
+              {showWhatsApp ? 'Cerrar WhatsApp' : 'Interpretar WhatsApp'}
+            </button>
+            <button type="button" className="btn btn-primary" onClick={() => setShowForm((v) => !v)}>
+              {showForm ? 'Cerrar formulario' : '+ Nueva entrada/salida'}
+            </button>
+          </>
         }
       />
 
+      {showWhatsApp ? <WhatsAppParser onRegistered={() => setShowWhatsApp(false)} /> : null}
       {showForm ? <MovementForm onSubmit={(m) => { addLogisticsMovement(m); setShowForm(false) }} /> : null}
 
       <div className="grid-2 mb-4">
@@ -61,6 +69,115 @@ export function LogisticsPage() {
         rows={[...state.logisticsMovements].sort((a, b) => b.date.localeCompare(a.date))}
         rowKey={(m) => m.id}
       />
+    </div>
+  )
+}
+
+function WhatsAppParser({ onRegistered }: { onRegistered: () => void }) {
+  const state = useAppStore()
+  const addLogisticsMovement = useAppStore((item) => item.addLogisticsMovement)
+  const [message, setMessage] = useState('')
+  const [proposal, setProposal] = useState<WhatsAppEntryProposal | null>(null)
+  const [feedType, setFeedType] = useState('')
+  const [error, setError] = useState('')
+
+  const integrated = proposal ? state.integrateds.find((item) => item.id === proposal.integratedId) : undefined
+  const activeCeba = integrated?.activeCebaId
+    ? state.cebas.find((item) => item.id === integrated.activeCebaId && item.status !== 'closed')
+    : undefined
+  const availableFeedTypes = integrated
+    ? [...new Set(state.tariffs
+        .filter((tariff) => tariff.providerId === integrated.feedProviderId)
+        .map((tariff) => tariff.feedType))]
+    : []
+  const selectedFeedType = feedType || availableFeedTypes[0] || ''
+  const blockReason = activeCeba
+    ? `El integrado ya tiene la ceba ${activeCeba.id} activa. Ciérrala antes de confirmar una nueva entrada.`
+    : !selectedFeedType && proposal
+      ? 'El integrado no tiene un tipo de pienso disponible.'
+      : ''
+
+  const handleParse = () => {
+    const result = parseWhatsAppEntry(message, state.integrateds)
+    if (!result.ok) {
+      setProposal(null)
+      setError(result.error)
+      return
+    }
+    setProposal(result.proposal)
+    setFeedType('')
+    setError('')
+  }
+
+  const handleConfirm = () => {
+    if (!proposal || blockReason) return
+    addLogisticsMovement({
+      id: generateId('log'),
+      type: 'entrada',
+      date: DEMO_REFERENCE_DATE,
+      integratedId: proposal.integratedId,
+      cebaId: generateId('ceba'),
+      animals: proposal.animals,
+      kg: proposal.kg,
+      origin: proposal.origin,
+      feedType: selectedFeedType,
+      archiveStatus: 'pendiente',
+    })
+    onRegistered()
+  }
+
+  return (
+    <div className="card whatsapp-parser mb-4">
+      <div className="section-title">Mensaje de WhatsApp simulado</div>
+      <p className="page-subtitle mb-3">Pega un mensaje de entrada. Los datos se propondrán para que puedas revisarlos antes de registrar la ceba.</p>
+      <div className="field">
+        <label className="field__label" htmlFor="whatsapp-message">Mensaje recibido</label>
+        <textarea
+          id="whatsapp-message"
+          className="input whatsapp-parser__textarea"
+          value={message}
+          onChange={(event) => setMessage(event.target.value)}
+          placeholder="Vienen de Casa Ezequiel 750 lechones para Ismael Cuesta con 14.600 kg"
+        />
+      </div>
+      <button type="button" className="btn btn-secondary mt-3" disabled={!message.trim()} onClick={handleParse}>Analizar mensaje</button>
+
+      <div aria-live="polite">
+        {error ? <p className="whatsapp-parser__error mt-3">{error}</p> : null}
+        {proposal ? (
+          <div className="whatsapp-parser__proposal mt-4">
+            <div className="section-title section-title--tight">Propuesta extraída</div>
+            <div className="whatsapp-parser__fields">
+              <div className="field">
+                <label className="field__label" htmlFor="whatsapp-origin">Origen</label>
+                <input id="whatsapp-origin" className="input" value={proposal.origin} onChange={(event) => setProposal({ ...proposal, origin: event.target.value })} />
+              </div>
+              <div className="field">
+                <label className="field__label" htmlFor="whatsapp-animals">Animales</label>
+                <input id="whatsapp-animals" className="input" type="number" min={1} value={proposal.animals} onChange={(event) => setProposal({ ...proposal, animals: Number(event.target.value) })} />
+              </div>
+              <div className="field">
+                <label className="field__label" htmlFor="whatsapp-integrated">Integrado</label>
+                <select id="whatsapp-integrated" className="select" value={proposal.integratedId} onChange={(event) => { setProposal({ ...proposal, integratedId: Number(event.target.value) }); setFeedType('') }}>
+                  {state.integrateds.map((item) => <option key={item.id} value={item.id}>#{item.id} {item.name}</option>)}
+                </select>
+              </div>
+              <div className="field">
+                <label className="field__label" htmlFor="whatsapp-kg">Kg</label>
+                <input id="whatsapp-kg" className="input" type="number" min={1} value={proposal.kg} onChange={(event) => setProposal({ ...proposal, kg: Number(event.target.value) })} />
+              </div>
+              <div className="field">
+                <label className="field__label" htmlFor="whatsapp-feed">Tipo de pienso</label>
+                <select id="whatsapp-feed" className="select" value={selectedFeedType} onChange={(event) => setFeedType(event.target.value)}>
+                  {availableFeedTypes.map((value) => <option key={value} value={value}>{value}</option>)}
+                </select>
+              </div>
+            </div>
+            {blockReason ? <p className="whatsapp-parser__warning mt-3">{blockReason}</p> : null}
+            <button type="button" className="btn btn-primary mt-3" disabled={Boolean(blockReason) || proposal.animals <= 0 || proposal.kg <= 0 || !proposal.origin.trim()} onClick={handleConfirm}>Confirmar y registrar entrada</button>
+          </div>
+        ) : null}
+      </div>
     </div>
   )
 }
