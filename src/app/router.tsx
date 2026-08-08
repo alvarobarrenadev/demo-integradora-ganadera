@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createHashRouter } from 'react-router-dom'
 import { AppShell } from '../components/layout/AppShell'
 import { DashboardPage } from '../pages/DashboardPage'
 import { InvoicesPage } from '../pages/InvoicesPage'
@@ -15,7 +15,7 @@ import { TransportersPage } from '../pages/TransportersPage'
 import { EmittedInvoicesPage } from '../pages/EmittedInvoicesPage'
 import { AccountingPage } from '../pages/AccountingPage'
 
-export const router = createBrowserRouter([
+export const router = createHashRouter([
   {
     element: <AppShell />,
     children: [

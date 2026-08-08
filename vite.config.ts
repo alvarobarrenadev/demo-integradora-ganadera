@@ -7,6 +7,7 @@ const sassDir = (name: string) => fileURLToPath(new URL(`./src/sass/${name}`, im
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/demo-integradora-ganadera/',
   plugins: [react()],
   resolve: {
     alias: {

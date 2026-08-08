@@ -2,10 +2,13 @@
   "name": "demo-integradora-ganadera",
   "private": true,
   "version": "0.0.0",
+  "homepage": "https://alvarobarrenadev.github.io/demo-integradora-ganadera/",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "predeploy": "pnpm build",
+    "deploy": "gh-pages -d dist",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run"
@@ -27,6 +30,7 @@
     "eslint": "^10.8.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.3",
+    "gh-pages": "^6.3.0",
     "globals": "^17.7.0",
     "sass": "^1.102.0",
     "typescript": "~6.0.2",

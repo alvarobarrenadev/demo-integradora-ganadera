@@ -45,4 +45,15 @@ Casos a verificar en la misma pasada:
 pnpm test    # vitest
 pnpm lint    # eslint
 pnpm build   # tsc -b && vite build
+pnpm deploy  # publica dist/ en la rama gh-pages
 ```
+
+## GitHub Pages
+
+La aplicación se publica en:
+
+```text
+https://alvarobarrenadev.github.io/demo-integradora-ganadera/
+```
+
+El despliegue usa rutas hash para que la navegación y las recargas funcionen correctamente en GitHub Pages.
