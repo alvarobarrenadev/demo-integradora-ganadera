@@ -59,7 +59,7 @@ Recharts
 Vitest
 localStorage
 pnpm
-Vercel
+GitHub Pages
 ```
 
 > Nota de implementación aprobada: el repositorio ya incluye un scaffold Sass 7-1 en `src/sass/` (abstracts/base/components/layout/pages/themes/vendors). Esa estructura sustituye a "SCSS Modules" para este proyecto — no se usan ambos sistemas a la vez.
@@ -2127,7 +2127,7 @@ El proyecto estará terminado cuando:
 - ese pago aparezca en previsión;
 - los tests pasen;
 - `pnpm build` funcione;
-- la app esté desplegable en Vercel.
+- la app esté desplegable en GitHub Pages.
 
 ---
 
