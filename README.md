@@ -38,6 +38,7 @@ Abre `http://localhost:5173`. El estado se persiste en `localStorage`; usa **Res
 3. `validateInvoice` es **atómica**: si la factura necesita una ceba activa y no existe, no se valida nada (ni pago, ni contabilidad); todo o nada, con aviso visible.
 4. **Facturas emitidas** (`generateEmittedInvoice`) están desacopladas de `generateSettlement`: liquidar una ceba y emitir su factura son dos acciones y numeraciones independientes (`FE-AAAA-NNN`).
 5. Redondeo monetario centralizado en `utils/numbers.ts` (`roundTo`), robusto frente a errores de coma flotante — nunca `Math.round(v*100)/100` a pelo.
+6. La exportación contable genera un CSV real por mes, compatible con Excel y con resumen, detalle de facturas y totales.
 
 ## Flujo de demo (8 clics, 0 tecleo)
 

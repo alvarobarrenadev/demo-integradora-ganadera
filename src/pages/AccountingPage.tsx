@@ -4,6 +4,8 @@ import { PageHeader } from '../components/common/PageHeader'
 import { StatusBadge } from '../components/common/StatusBadge'
 import { fmtEUR } from '../utils/currency'
 import { canExport } from '../domain/roles'
+import { buildAccountingCsv } from '../domain/accounting'
+import { downloadTextFile } from '../utils/download'
 
 export function AccountingPage() {
   const state = useAppStore()
@@ -21,6 +23,12 @@ export function AccountingPage() {
     }
     return [...map.entries()].sort(([a], [b]) => b.localeCompare(a))
   }, [state.invoices])
+
+  const handleDownload = (month: string) => {
+    const csv = buildAccountingCsv(month, state.invoices, state.providers, state.integrateds)
+    downloadTextFile(`valdeon-contabilidad-${month}.csv`, `\uFEFF${csv}`, 'text/csv')
+    setDownloaded((previous) => new Set(previous).add(month))
+  }
 
   return (
     <div>
@@ -49,9 +57,9 @@ export function AccountingPage() {
                     <button
                       type="button"
                       className="btn btn-secondary"
-                      onClick={() => setDownloaded((prev) => new Set(prev).add(month))}
+                      onClick={() => handleDownload(month)}
                     >
-                      {downloaded.has(month) ? 'Paquete descargado ✓' : 'Descargar paquete'}
+                      {downloaded.has(month) ? 'CSV descargado ✓' : 'Descargar paquete CSV'}
                     </button>
                   ) : '—'}
                 </td>
