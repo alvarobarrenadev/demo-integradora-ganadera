@@ -3,6 +3,7 @@
 // A simulated printed document — always renders as light paper with dark ink,
 // regardless of the app theme (a real printout doesn't switch to dark mode).
 .invoice-detail-doc {
+  min-width: 0;
   border: 1px solid #eceeef;
   border-radius: 6px;
   padding: 30px 32px;
@@ -169,11 +170,16 @@
 
 @media (max-width: v.$bp-tablet) {
   .invoice-detail-doc {
-    padding: 20px;
-    overflow-x: auto;
+    padding: 20px 16px;
   }
 
   .invoice-doc__line {
-    min-width: 440px;
+    grid-template-columns: minmax(64px, 1fr) auto auto auto;
+    gap: 8px;
+    font-size: 10px;
+
+    > :not(:first-child) {
+      white-space: nowrap;
+    }
   }
 }
