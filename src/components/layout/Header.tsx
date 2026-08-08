@@ -1,5 +1,7 @@
 import { useLocation } from 'react-router-dom'
 import { useTheme } from '../../hooks/useTheme'
+import { useAppStore } from '../../store/useAppStore'
+import { ROLE_PROFILES } from '../../domain/roles'
 
 interface HeaderProps {
   onMenuClick: () => void
@@ -7,7 +9,9 @@ interface HeaderProps {
 
 export function Header({ onMenuClick }: HeaderProps) {
   const { theme, toggleTheme } = useTheme()
+  const currentRole = useAppStore((state) => state.currentRole)
   const { pathname } = useLocation()
+  const profile = ROLE_PROFILES[currentRole]
   const section = ROUTE_TITLES.find(([path]) => path === '/' ? pathname === '/' : pathname.startsWith(path))?.[1] ?? 'Valdeón Gestión'
 
   return (
@@ -44,10 +48,10 @@ export function Header({ onMenuClick }: HeaderProps) {
           )}
         </button>
         <div className="header-user">
-          <div className="avatar">M</div>
+          <div className="avatar">{profile.initial}</div>
           <div className="header-user__copy">
-            <span className="header-user__name">Mario</span>
-            <span className="header-user__role">Administrador</span>
+            <span className="header-user__name">{profile.name}</span>
+            <span className="header-user__role">{profile.label}</span>
           </div>
         </div>
       </div>

@@ -5,7 +5,25 @@ import { calculatePriceDiscrepancy, getApplicableTariff } from '../domain/invoic
 import { selectFeedYearComparison, selectRetentionLedger, selectWeeklyCashForecast } from './selectors'
 
 beforeEach(() => {
-  useAppStore.setState({ ...createInitialState(), toast: null, lastSimulatedInvoiceId: null })
+  useAppStore.setState({ ...createInitialState(), currentRole: 'admin', toast: null, lastSimulatedInvoiceId: null })
+})
+
+describe('role permissions', () => {
+  it('blocks mutations for Dirección and allows accounting exports for Contable', () => {
+    const invoiceCount = useAppStore.getState().invoices.length
+    useAppStore.getState().setCurrentRole('direction')
+    useAppStore.getState().simulateIncomingInvoice()
+    expect(useAppStore.getState().invoices).toHaveLength(invoiceCount)
+    expect(useAppStore.getState().toast?.variant).toBe('error')
+
+    useAppStore.setState({ currentRole: 'accounting', settlements: [{
+      id: 'SET-ROLE', cebaId: 'V-118', integratedId: 14, pigs: 1, conversion: 2.3,
+      baseAmount: 13.5, bonusPerPig: 1.2, bonusAmount: 1.2, grossAmount: 14.7,
+      retentionRate: 0.02, retentionAmount: 0.29,
+      netAmount: 14.41, generatedAt: '2026-07-15',
+    }] })
+    expect(useAppStore.getState().generateEmittedInvoice('SET-ROLE')).toBeDefined()
+  })
 })
 
 describe('validateInvoice', () => {

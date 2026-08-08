@@ -167,10 +167,20 @@
 }
 
 @media (max-width: v.$bp-tablet) {
-  .app-header__context,
+  .app-header__eyebrow,
   .environment-badge,
   .header-user__copy {
     display: none;
+  }
+
+  .app-header__context {
+    flex: 1;
+  }
+
+  .app-header__title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .app-header__actions {

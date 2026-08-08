@@ -7,6 +7,7 @@ import { Modal } from '../components/common/Modal'
 import { fmtEUR, fmtPricePerKg } from '../utils/currency'
 import { fmtNumber } from '../utils/dates'
 import { selectFeedYearComparison } from '../store/selectors'
+import { canOperate } from '../domain/roles'
 
 type Tab = 'consumos' | 'tarifas' | 'analisis'
 type Consumption = { kg: number; base: number; freight: number }
@@ -24,11 +25,11 @@ export function FeedPage() {
     <div>
       <PageHeader
         title="Pienso y tarifas"
-        actions={
+        actions={canOperate(state.currentRole) ? (
           <button type="button" className="btn btn-primary" disabled={augustApplied} onClick={() => setConfirmOpen(true)}>
             {augustApplied ? 'Tarifa de agosto aplicada' : 'Aplicar tarifa de agosto'}
           </button>
-        }
+        ) : null}
       />
 
       <div className="tabs">
@@ -41,7 +42,7 @@ export function FeedPage() {
       {tab === 'tarifas' ? <TarifasView /> : null}
       {tab === 'analisis' ? <AnalisisView /> : null}
 
-      {confirmOpen ? (
+      {canOperate(state.currentRole) && confirmOpen ? (
         <Modal
           title="Aplicar tarifa de agosto"
           onClose={() => setConfirmOpen(false)}

@@ -1,12 +1,15 @@
 import { useState } from 'react'
-import { Outlet, useLocation } from 'react-router-dom'
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { Sidebar } from './Sidebar'
 import { Header } from './Header'
 import { ToastHost } from '../common/ToastHost'
+import { useAppStore } from '../../store/useAppStore'
+import { canAccessRoute, getDefaultRoute } from '../../domain/roles'
 
 export function AppShell() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const location = useLocation()
+  const currentRole = useAppStore((state) => state.currentRole)
   const [lastPathname, setLastPathname] = useState(location.pathname)
 
   // Close the mobile drawer on navigation — adjusting state during render
@@ -31,7 +34,11 @@ export function AppShell() {
       <div className="app-main">
         <Header onMenuClick={() => setSidebarOpen((v) => !v)} />
         <main className="app-content">
-          <Outlet />
+          {canAccessRoute(currentRole, location.pathname) ? (
+            <Outlet />
+          ) : (
+            <Navigate to={getDefaultRoute(currentRole)} replace />
+          )}
         </main>
       </div>
       <ToastHost />

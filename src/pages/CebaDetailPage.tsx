@@ -5,6 +5,7 @@ import { calculateConversion, getCebaDaysInCycle, isFullyAccountedFor } from '..
 import { selectSettlementForCeba } from '../store/selectors'
 import { fmtEUR } from '../utils/currency'
 import { formatDateEs, fmtNumber, DEMO_REFERENCE_DATE } from '../utils/dates'
+import { canExport, canOperate } from '../domain/roles'
 
 export function CebaDetailPage() {
   const { id } = useParams()
@@ -40,7 +41,7 @@ export function CebaDetailPage() {
           <p className="page-subtitle">#{ceba.integratedId} · {integrated?.name} · {ceba.origin} · {ceba.feedType}</p>
         </div>
         <div className="page-header__actions">
-          {ceba.status !== 'closed' ? (
+          {canOperate(state.currentRole) && ceba.status !== 'closed' ? (
             <button type="button" className="btn btn-primary" disabled={!canClose} onClick={() => closeCeba(ceba.id)}>
               Cerrar ceba
             </button>
@@ -156,11 +157,17 @@ function SettlementSection({
           </div>
           <div className="settlement-actions">
             <button type="button" className="btn btn-secondary" onClick={() => navigate('/tesoreria')}>Ver en previsión semanal</button>
-            <button type="button" className="btn btn-secondary" onClick={() => navigate('/facturas-emitidas')}>Generar factura emitida</button>
+            {canExport(state.currentRole) ? (
+              <button type="button" className="btn btn-secondary" onClick={() => navigate('/facturas-emitidas')}>Generar factura emitida</button>
+            ) : null}
           </div>
         </>
       ) : (
-        <button type="button" className="btn btn-primary" onClick={onGenerate}>Generar liquidación</button>
+        canOperate(state.currentRole) ? (
+          <button type="button" className="btn btn-primary" onClick={onGenerate}>Generar liquidación</button>
+        ) : (
+          <p className="page-subtitle">Liquidación pendiente de generación.</p>
+        )
       )}
     </div>
   )

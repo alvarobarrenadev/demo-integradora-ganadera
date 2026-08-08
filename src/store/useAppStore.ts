@@ -23,6 +23,7 @@ import { calculateConversion, isFullyAccountedFor } from '../domain/cebas'
 import { calculateSettlement, getNextBillingDate } from '../domain/settlements'
 import { generateEmittedInvoiceNumber } from '../domain/emittedInvoices'
 import { buildAugustTariffs } from '../domain/tariffs'
+import { canExport, canOperate, type UserRole } from '../domain/roles'
 
 export interface NewCebaEntryInput {
   integratedId: number
@@ -49,6 +50,7 @@ export interface NewCebaExitInput {
 }
 
 interface AppActions {
+  setCurrentRole: (role: UserRole) => void
   resetDemo: () => void
   simulateIncomingInvoice: () => void
   validateInvoice: (invoiceId: string) => void
@@ -63,6 +65,7 @@ interface AppActions {
 }
 
 export type AppState = AppData & {
+  currentRole: UserRole
   toast: ToastMessage | null
   lastSimulatedInvoiceId: string | null
 } & AppActions
@@ -71,22 +74,38 @@ function toast(variant: ToastMessage['variant'], title: string, description?: st
   return { id: generateId('toast'), variant, title, description }
 }
 
+function permissionDeniedToast(): ToastMessage {
+  return toast('error', 'Acción no permitida', 'El perfil seleccionado no tiene permiso para realizar esta acción.')
+}
+
 export const useAppStore = create<AppState>()(
   persist(
     (set, get) => ({
       ...createInitialState(),
+      currentRole: 'admin',
       toast: null,
       lastSimulatedInvoiceId: null,
 
+      setCurrentRole: (currentRole) => set({ currentRole, toast: null }),
+
       resetDemo: () => {
+        if (!canOperate(get().currentRole)) {
+          set({ toast: permissionDeniedToast() })
+          return
+        }
+        const currentRole = get().currentRole
         useAppStore.persist.clearStorage()
-        set({ ...createInitialState(), toast: null, lastSimulatedInvoiceId: null })
+        set({ ...createInitialState(), currentRole, toast: null, lastSimulatedInvoiceId: null })
       },
 
       dismissToast: () => set({ toast: null }),
 
       simulateIncomingInvoice: () => {
         const state = get()
+        if (!canOperate(state.currentRole)) {
+          set({ toast: permissionDeniedToast() })
+          return
+        }
         const date = '2026-07-15'
         const kg = 18200
         const invoicedPricePerKg = 0.334
@@ -129,6 +148,10 @@ export const useAppStore = create<AppState>()(
 
       validateInvoice: (invoiceId) => {
         const state = get()
+        if (!canOperate(state.currentRole)) {
+          set({ toast: permissionDeniedToast() })
+          return
+        }
         const invoice = state.invoices.find((i) => i.id === invoiceId)
         if (!invoice) return
         if (invoice.status === 'validated') return // idempotent
@@ -200,6 +223,10 @@ export const useAppStore = create<AppState>()(
 
       applyAugustTariffs: () => {
         const state = get()
+        if (!canOperate(state.currentRole)) {
+          set({ toast: permissionDeniedToast() })
+          return
+        }
         if (state.tariffs.some((t) => t.month === '2026-08')) return // idempotent
         const august = buildAugustTariffs(state.tariffs)
         set({
@@ -210,6 +237,10 @@ export const useAppStore = create<AppState>()(
 
       addLogisticsMovement: (movement) => {
         const state = get()
+        if (!canOperate(state.currentRole)) {
+          set({ toast: permissionDeniedToast() })
+          return
+        }
         if (state.logisticsMovements.some((m) => m.id === movement.id)) return // idempotent duplicate guard
         if (!movement.date || movement.animals <= 0 || movement.kg <= 0) {
           set({ toast: toast('error', 'Datos no válidos', 'La fecha, los animales y los kilos deben ser válidos.') })
@@ -313,6 +344,10 @@ export const useAppStore = create<AppState>()(
 
       closeCeba: (cebaId) => {
         const state = get()
+        if (!canOperate(state.currentRole)) {
+          set({ toast: permissionDeniedToast() })
+          return
+        }
         const ceba = state.cebas.find((c) => c.id === cebaId)
         if (!ceba) return
         if (ceba.status === 'closed') return // idempotent
@@ -342,6 +377,10 @@ export const useAppStore = create<AppState>()(
 
       generateSettlement: (cebaId) => {
         const state = get()
+        if (!canOperate(state.currentRole)) {
+          set({ toast: permissionDeniedToast() })
+          return undefined
+        }
         const existing = state.settlements.find((s) => s.cebaId === cebaId)
         if (existing) return existing // idempotent
 
@@ -377,6 +416,10 @@ export const useAppStore = create<AppState>()(
 
       generateEmittedInvoice: (settlementId) => {
         const state = get()
+        if (!canExport(state.currentRole)) {
+          set({ toast: permissionDeniedToast() })
+          return undefined
+        }
         const existing = state.emittedInvoices.find((e) => e.settlementId === settlementId)
         if (existing) return existing // idempotent
 
@@ -422,6 +465,7 @@ export const useAppStore = create<AppState>()(
         transporters: state.transporters,
         trucks: state.trucks,
         feedConsumptionHistory: state.feedConsumptionHistory,
+        currentRole: state.currentRole,
       }),
     },
   ),

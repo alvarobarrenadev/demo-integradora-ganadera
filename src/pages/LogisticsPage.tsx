@@ -7,6 +7,7 @@ import { parseWhatsAppEntry, type WhatsAppEntryProposal } from '../domain/whatsa
 import { generateId } from '../utils/ids'
 import { DEMO_REFERENCE_DATE, formatDateEs, fmtNumber } from '../utils/dates'
 import type { LogisticsMovement } from '../types/logistics'
+import { canOperate } from '../domain/roles'
 
 export function LogisticsPage() {
   const state = useAppStore()
@@ -38,7 +39,7 @@ export function LogisticsPage() {
     <div>
       <PageHeader
         title="Logística"
-        actions={
+        actions={canOperate(state.currentRole) ? (
           <>
             <button type="button" className="btn btn-secondary" onClick={() => setShowWhatsApp((value) => !value)}>
               {showWhatsApp ? 'Cerrar WhatsApp' : 'Interpretar WhatsApp'}
@@ -47,11 +48,11 @@ export function LogisticsPage() {
               {showForm ? 'Cerrar formulario' : '+ Nueva entrada/salida'}
             </button>
           </>
-        }
+        ) : null}
       />
 
-      {showWhatsApp ? <WhatsAppParser onRegistered={() => setShowWhatsApp(false)} /> : null}
-      {showForm ? <MovementForm onSubmit={(m) => { addLogisticsMovement(m); setShowForm(false) }} /> : null}
+      {canOperate(state.currentRole) && showWhatsApp ? <WhatsAppParser onRegistered={() => setShowWhatsApp(false)} /> : null}
+      {canOperate(state.currentRole) && showForm ? <MovementForm onSubmit={(m) => { addLogisticsMovement(m); setShowForm(false) }} /> : null}
 
       <div className="grid-2 mb-4">
         <div className="flex-col gap-4">

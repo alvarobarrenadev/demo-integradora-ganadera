@@ -3,6 +3,7 @@ import { useAppStore } from '../store/useAppStore'
 import { PageHeader } from '../components/common/PageHeader'
 import { StatusBadge } from '../components/common/StatusBadge'
 import { fmtEUR } from '../utils/currency'
+import { canExport } from '../domain/roles'
 
 export function AccountingPage() {
   const state = useAppStore()
@@ -44,13 +45,15 @@ export function AccountingPage() {
                 <td className="cell-num">{fmtEUR(total)}</td>
                 <td><StatusBadge status="validated" label="Preparado" /></td>
                 <td>
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    onClick={() => setDownloaded((prev) => new Set(prev).add(month))}
-                  >
-                    {downloaded.has(month) ? 'Paquete descargado ✓' : 'Descargar paquete'}
-                  </button>
+                  {canExport(state.currentRole) ? (
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => setDownloaded((prev) => new Set(prev).add(month))}
+                    >
+                      {downloaded.has(month) ? 'Paquete descargado ✓' : 'Descargar paquete'}
+                    </button>
+                  ) : '—'}
                 </td>
               </tr>
             ))}

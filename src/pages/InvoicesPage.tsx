@@ -8,6 +8,7 @@ import { ProcessingOverlay } from '../components/common/ProcessingOverlay'
 import { fmtEUR, fmtPricePerKg } from '../utils/currency'
 import { formatDateEs, fmtNumber } from '../utils/dates'
 import type { Invoice } from '../types/invoice'
+import { canOperate } from '../domain/roles'
 
 const PROCESSING_STEPS = ['Recibiendo factura...', 'Procesando documento...', 'Extrayendo datos...', 'Factura procesada']
 
@@ -88,11 +89,11 @@ export function InvoicesPage() {
       <PageHeader
         title="Facturas"
         subtitle="Gestión y conciliación de facturas de pienso."
-        actions={
+        actions={canOperate(state.currentRole) ? (
           <button type="button" className="btn btn-primary" onClick={handleSimulate}>
             + Simular factura entrante
           </button>
-        }
+        ) : null}
       />
 
       <div className="tabs">

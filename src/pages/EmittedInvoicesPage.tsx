@@ -3,6 +3,7 @@ import { PageHeader } from '../components/common/PageHeader'
 import { selectRetentionLedger } from '../store/selectors'
 import { fmtEUR } from '../utils/currency'
 import { formatDateEs } from '../utils/dates'
+import { canExport } from '../domain/roles'
 
 export function EmittedInvoicesPage() {
   const state = useAppStore()
@@ -66,7 +67,9 @@ export function EmittedInvoicesPage() {
                   <span className="kv-row__label">{s.cebaId} — #{s.integratedId} {integrated?.name}</span>
                   <span className="emitted-invoice-pending__actions">
                     <span className="kv-row__value">{fmtEUR(s.netAmount)}</span>
-                    <button type="button" className="btn btn-primary" onClick={() => handleGenerate(s.id)}>Generar factura emitida</button>
+                    {canExport(state.currentRole) ? (
+                      <button type="button" className="btn btn-primary" onClick={() => handleGenerate(s.id)}>Generar factura emitida</button>
+                    ) : null}
                   </span>
                 </div>
               )
@@ -95,7 +98,11 @@ export function EmittedInvoicesPage() {
                 <td>{formatDateEs(e.date)}</td>
                 <td className="cell-num">{fmtEUR(e.retentionAmount)}</td>
                 <td className="cell-num cell-strong">{fmtEUR(e.amount)}</td>
-                <td><button type="button" className="btn btn-ghost" onClick={() => handleRedownload(e.id)}>Descargar PDF</button></td>
+                <td>
+                  {canExport(state.currentRole) ? (
+                    <button type="button" className="btn btn-ghost" onClick={() => handleRedownload(e.id)}>Descargar PDF</button>
+                  ) : '—'}
+                </td>
               </tr>
             ))}
           </tbody>

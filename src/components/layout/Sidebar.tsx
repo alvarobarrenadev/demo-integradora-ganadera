@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import { useAppStore } from '../../store/useAppStore'
+import { canAccessRoute, canOperate, type UserRole } from '../../domain/roles'
 
 interface NavItem {
   to: string
@@ -152,6 +153,9 @@ interface SidebarProps {
 
 export function Sidebar({ open, onNavigate }: SidebarProps) {
   const resetDemo = useAppStore((s) => s.resetDemo)
+  const currentRole = useAppStore((s) => s.currentRole)
+  const setCurrentRole = useAppStore((s) => s.setCurrentRole)
+  const visibleItems = NAV_ITEMS.filter((item) => canAccessRoute(currentRole, item.to))
 
   return (
     <nav className={`sidebar${open ? ' is-open' : ''}`} aria-label="Navegación principal">
@@ -166,9 +170,11 @@ export function Sidebar({ open, onNavigate }: SidebarProps) {
       </div>
 
       <div className="sidebar-nav">
-        {NAV_ITEMS.map((item) => (
+        {visibleItems.map((item, index) => (
           <div className="sidebar-nav__item" key={item.to}>
-            {item.section ? <div className="sidebar-nav__section">{item.section}</div> : null}
+            {item.section || (currentRole === 'accounting' && index === 0) ? (
+              <div className="sidebar-nav__section">{item.section ?? 'Exportaciones'}</div>
+            ) : null}
             <NavLink
               to={item.to}
               end={item.to === '/'}
@@ -185,17 +191,27 @@ export function Sidebar({ open, onNavigate }: SidebarProps) {
       <div className="sidebar-spacer" />
 
       <div className="sidebar-footer">
-        <button type="button" className="sidebar-reset" onClick={resetDemo}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7}>
-            <path d="M3 12a9 9 0 1 1 3 6.7" />
-            <path d="M3 21v-5h5" />
-          </svg>
-          <span>Restablecer demo</span>
-        </button>
-        <div className="sidebar-user">
-          <div className="avatar">M</div>
-          <span className="sidebar-user__name">Mario</span>
-        </div>
+        {canOperate(currentRole) ? (
+          <button type="button" className="sidebar-reset" onClick={resetDemo}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7}>
+              <path d="M3 12a9 9 0 1 1 3 6.7" />
+              <path d="M3 21v-5h5" />
+            </svg>
+            <span>Restablecer demo</span>
+          </button>
+        ) : null}
+        <label className="sidebar-role-select">
+          <span>Perfil de usuario</span>
+          <select
+            value={currentRole}
+            onChange={(event) => setCurrentRole(event.target.value as UserRole)}
+            aria-label="Cambiar perfil de usuario"
+          >
+            <option value="admin">Mario · Administrador</option>
+            <option value="direction">Dirección · Solo lectura</option>
+            <option value="accounting">Contable · Exportaciones</option>
+          </select>
+        </label>
       </div>
     </nav>
   )

@@ -3,6 +3,7 @@ import { useAppStore } from '../store/useAppStore'
 import { getApplicableTariff, calculatePriceDiscrepancy } from '../domain/invoices'
 import { fmtEUR, fmtPricePerKg } from '../utils/currency'
 import { formatDateEs, fmtNumber } from '../utils/dates'
+import { canOperate } from '../domain/roles'
 
 export function InvoiceDetailPage() {
   const { id } = useParams()
@@ -42,7 +43,7 @@ export function InvoiceDetailPage() {
         <h1 className="page-title">Detalle de factura</h1>
         <div className="page-header__actions">
           <button type="button" className="btn btn-secondary" onClick={() => navigate('/facturas')}>Volver a la bandeja</button>
-          {!isValidated && discrepancy.hasDiscrepancy ? (
+          {canOperate(state.currentRole) && !isValidated && discrepancy.hasDiscrepancy ? (
             <>
               <button type="button" className="btn btn-danger" disabled title="Simulado — sin backend real">Reclamar a proveedor</button>
               <button
@@ -56,7 +57,7 @@ export function InvoiceDetailPage() {
               </button>
             </>
           ) : null}
-          {!isValidated && !discrepancy.hasDiscrepancy ? (
+          {canOperate(state.currentRole) && !isValidated && !discrepancy.hasDiscrepancy ? (
             <button
               type="button"
               className="btn btn-primary"
