@@ -2,6 +2,8 @@
   "name": "Valdeón Gestión",
   "short_name": "Valdeón",
   "description": "Gestión centralizada para integradoras ganaderas",
+  "id": "../",
+  "lang": "es",
   "start_url": "../",
   "scope": "../",
   "icons": [
