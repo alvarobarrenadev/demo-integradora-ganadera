@@ -62,9 +62,9 @@ export function EmittedInvoicesPage() {
             {settlementsWithoutInvoice.map((s) => {
               const integrated = state.integrateds.find((i) => i.id === s.integratedId)
               return (
-                <div key={s.id} className="kv-row">
+                <div key={s.id} className="kv-row emitted-invoice-pending">
                   <span className="kv-row__label">{s.cebaId} — #{s.integratedId} {integrated?.name}</span>
-                  <span className="flex items-center gap-3">
+                  <span className="emitted-invoice-pending__actions">
                     <span className="kv-row__value">{fmtEUR(s.netAmount)}</span>
                     <button type="button" className="btn btn-primary" onClick={() => handleGenerate(s.id)}>Generar factura emitida</button>
                   </span>

@@ -168,6 +168,12 @@
   }
 }
 
+.emitted-invoice-pending__actions {
+  display: flex;
+  align-items: center;
+  gap: v.$space-3;
+}
+
 @media (max-width: v.$bp-tablet) {
   .invoice-detail-doc {
     padding: 20px 16px;
@@ -180,6 +186,20 @@
 
     > :not(:first-child) {
       white-space: nowrap;
+    }
+  }
+
+  .emitted-invoice-pending {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .emitted-invoice-pending__actions {
+    align-items: stretch;
+    flex-direction: column;
+
+    .btn {
+      width: 100%;
     }
   }
 }

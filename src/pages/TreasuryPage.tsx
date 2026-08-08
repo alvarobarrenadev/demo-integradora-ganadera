@@ -70,25 +70,27 @@ function ResumenTab({
 
       <div className="card mb-4">
         <div className="section-title">Previsión semanal</div>
-        <div className="forecast-grid forecast-grid--weeks4 scroll-x">
-          <div />
-          {weekly.map((w) => (
-            <div key={w.start} className="forecast-grid__cell forecast-grid__cell--muted">
-              {formatDateEs(w.start).slice(0, 5)}–{formatDateEs(w.end).slice(0, 5)}
-            </div>
-          ))}
-          <div className="forecast-grid__label">Cobros</div>
-          {weekly.map((w) => (
-            <div key={`r-${w.start}`} className="forecast-grid__cell forecast-grid__cell--positive">{fmtEUR(w.receivables)}</div>
-          ))}
-          <div className="forecast-grid__label forecast-grid__row--divider">Pagos</div>
-          {weekly.map((w) => (
-            <div key={`p-${w.start}`} className="forecast-grid__cell forecast-grid__row--divider forecast-grid__cell--negative">{fmtEUR(w.payments)}</div>
-          ))}
-          <div className="forecast-grid__label forecast-grid__row--divider forecast-grid__label--strong">Neto</div>
-          {weekly.map((w) => (
-            <div key={`n-${w.start}`} className="forecast-grid__cell forecast-grid__row--divider">{w.net >= 0 ? '+' : ''}{fmtEUR(w.net)}</div>
-          ))}
+        <div className="scroll-x">
+          <div className="forecast-grid forecast-grid--weeks4">
+            <div />
+            {weekly.map((w) => (
+              <div key={w.start} className="forecast-grid__cell forecast-grid__cell--muted">
+                {formatDateEs(w.start).slice(0, 5)}–{formatDateEs(w.end).slice(0, 5)}
+              </div>
+            ))}
+            <div className="forecast-grid__label">Cobros</div>
+            {weekly.map((w) => (
+              <div key={`r-${w.start}`} className="forecast-grid__cell forecast-grid__cell--positive">{fmtEUR(w.receivables)}</div>
+            ))}
+            <div className="forecast-grid__label forecast-grid__row--divider">Pagos</div>
+            {weekly.map((w) => (
+              <div key={`p-${w.start}`} className="forecast-grid__cell forecast-grid__row--divider forecast-grid__cell--negative">{fmtEUR(w.payments)}</div>
+            ))}
+            <div className="forecast-grid__label forecast-grid__row--divider forecast-grid__label--strong">Neto</div>
+            {weekly.map((w) => (
+              <div key={`n-${w.start}`} className="forecast-grid__cell forecast-grid__row--divider">{w.net >= 0 ? '+' : ''}{fmtEUR(w.net)}</div>
+            ))}
+          </div>
         </div>
       </div>
 
