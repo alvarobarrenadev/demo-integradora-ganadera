@@ -35,7 +35,9 @@ export function AppShell() {
         <Header onMenuClick={() => setSidebarOpen((v) => !v)} />
         <main className="app-content">
           {canAccessRoute(currentRole, location.pathname) ? (
-            <Outlet />
+            <div className="page-transition" key={location.pathname}>
+              <Outlet />
+            </div>
           ) : (
             <Navigate to={getDefaultRoute(currentRole)} replace />
           )}

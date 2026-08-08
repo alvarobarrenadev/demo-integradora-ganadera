@@ -40,6 +40,7 @@ Abre `http://localhost:5173`. El estado se persiste en `localStorage`; usa **Res
 5. Redondeo monetario centralizado en `utils/numbers.ts` (`roundTo`), robusto frente a errores de coma flotante — nunca `Math.round(v*100)/100` a pelo.
 6. La exportación contable genera un CSV real por mes, compatible con Excel y con resumen, detalle de facturas y totales.
 7. Los resúmenes de Tesorería y Cebas incorporan gráficos operativos responsive para comparar flujos semanales y conversiones.
+8. Las transiciones de navegación y capas superpuestas son breves y respetan `prefers-reduced-motion`.
 
 ## Flujo de demo (8 clics, 0 tecleo)
 
