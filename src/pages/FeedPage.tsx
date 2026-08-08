@@ -124,7 +124,7 @@ function ConsumptionTable({ title, rows }: { title: string; rows: Array<Consumpt
   return (
     <div className="card">
       <div className="section-title">{title}</div>
-      <div className="data-table-wrap consumption-summary">
+      <div className="data-table-wrap responsive-summary">
         <table className="data-table">
           <thead><tr><th>Nombre</th><th className="cell-num">Kg</th><th className="cell-num">Total</th><th className="cell-num">€/kg</th></tr></thead>
           <tbody>
@@ -257,10 +257,10 @@ function AnalisisView() {
         </div>
         <div className="card">
           <div className="section-title">Acumulado comparable · enero a mes {comparison.cutoffMonth}</div>
-          <div className="data-table-wrap">
+          <div className="data-table-wrap responsive-summary">
             <table className="data-table">
               <thead><tr><th>Año</th><th className="cell-num">Kg</th><th className="cell-num">Coste</th><th className="cell-num">€/kg</th></tr></thead>
-              <tbody>{comparison.annual.map((values) => <tr key={values.year}><td className="cell-strong">{values.year}</td><td className="cell-num">{fmtNumber(values.kg)}</td><td className="cell-num">{fmtEUR(values.total)}</td><td className="cell-num">{values.kg ? fmtPricePerKg(values.total / values.kg) : '—'}</td></tr>)}</tbody>
+              <tbody>{comparison.annual.map((values) => <tr key={values.year}><td className="cell-strong">{values.year}</td><td className="cell-num" data-label="Kg">{fmtNumber(values.kg)}</td><td className="cell-num" data-label="Coste">{fmtEUR(values.total)}</td><td className="cell-num" data-label="€/kg">{values.kg ? fmtPricePerKg(values.total / values.kg) : '—'}</td></tr>)}</tbody>
             </table>
           </div>
         </div>
