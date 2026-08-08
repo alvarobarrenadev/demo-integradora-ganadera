@@ -39,12 +39,17 @@ export function downloadEmittedInvoicePdf(data: EmittedInvoicePdfData): void {
     doc.text(value, 190, y, { align: 'right' })
     y += 8
   }
+  const divider = () => {
+    doc.line(20, y, 190, y)
+    y += 8
+  }
+
   row('Liquidación base', fmtEUR(data.baseAmount))
   row('Bonus por conversión', fmtEUR(data.bonusAmount))
-  doc.line(20, y - 2, 190, y - 2)
+  divider()
   row('Bruto', fmtEUR(data.grossAmount))
-  row('Retención (2%)', `− ${fmtEUR(data.retentionAmount)}`)
-  doc.line(20, y - 2, 190, y - 2)
+  row('Retención (2%)', `- ${fmtEUR(data.retentionAmount)}`)
+  divider()
 
   doc.setFontSize(13)
   row('NETO A PAGAR', fmtEUR(data.netAmount))
