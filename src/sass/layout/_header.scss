@@ -105,26 +105,6 @@
   }
 }
 
-.environment-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  color: v.$color-text-muted;
-  font-size: 11.5px;
-  font-weight: 600;
-  padding: 6px 10px;
-  border: 1px solid v.$color-border;
-  border-radius: v.$radius-pill;
-
-  > span {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: v.$color-success;
-    box-shadow: 0 0 0 3px v.$color-accent-tint;
-  }
-}
-
 .header-user {
   display: flex;
   align-items: center;
@@ -168,7 +148,6 @@
 
 @media (max-width: v.$bp-tablet) {
   .app-header__eyebrow,
-  .environment-badge,
   .header-user__copy {
     display: none;
   }

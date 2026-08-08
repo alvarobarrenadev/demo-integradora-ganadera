@@ -28,7 +28,6 @@ export function Header({ onMenuClick }: HeaderProps) {
         <span className="app-header__title">{section}</span>
       </div>
       <div className="app-header__actions">
-        <span className="environment-badge"><span aria-hidden="true" /> Demo activa</span>
         <button
           type="button"
           className="theme-toggle"
