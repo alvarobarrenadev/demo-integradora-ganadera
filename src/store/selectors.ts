@@ -5,6 +5,7 @@ import { calculatePriceDiscrepancy, getApplicableTariff } from '../domain/invoic
 import { isDvrExpiringSoon } from '../domain/dvr'
 import { calculateWeeklyNet, sumPaymentsDue, sumReceivablesDue } from '../domain/treasury'
 import { roundCurrency } from '../utils/currency'
+import type { FeedConsumptionRecord } from '../types/feedConsumption'
 
 export const selectPendingInvoices = (state: AppState) =>
   state.invoices.filter((i) => i.status === 'pending' || i.status === 'discrepancy')
@@ -124,6 +125,63 @@ export const selectFeedExpenseByMonth = (state: AppState) => {
   return [...byMonth.entries()]
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([month, total]) => ({ month, total }))
+}
+
+/** Historical aggregates plus every validated feed invoice, so reports update with the operational flow. */
+export const selectFeedConsumptionRecords = (state: AppState): FeedConsumptionRecord[] => [
+  ...state.feedConsumptionHistory,
+  ...state.invoices.flatMap((invoice): FeedConsumptionRecord[] => {
+    const provider = state.providers.find((item) => item.id === invoice.providerId)
+    if (
+      invoice.status !== 'validated' || provider?.category !== 'feed' || invoice.integratedId == null ||
+      invoice.kg == null || invoice.invoicedPricePerKg == null || !invoice.feedType
+    ) return []
+    const feedBaseAmount = roundCurrency(invoice.kg * invoice.invoicedPricePerKg)
+    return [{
+      id: `invoice-${invoice.id}`,
+      month: invoice.date.slice(0, 7),
+      providerId: invoice.providerId,
+      integratedId: invoice.integratedId,
+      feedType: invoice.feedType,
+      kg: invoice.kg,
+      feedBaseAmount,
+      freight: invoice.freight,
+      total: roundCurrency(feedBaseAmount + invoice.freight),
+    }]
+  }),
+]
+
+export const selectFeedYearComparison = (state: AppState) => {
+  const currentYear = DEMO_REFERENCE_DATE.slice(0, 4)
+  const previousYear = String(Number(currentYear) - 1)
+  const records = selectFeedConsumptionRecords(state)
+  const cutoffMonth = records
+    .filter((row) => row.month.startsWith(currentYear))
+    .map((row) => row.month.slice(5))
+    .sort()
+    .at(-1) ?? '12'
+  const comparable = records.filter((row) => {
+    const year = row.month.slice(0, 4)
+    return (year === currentYear || year === previousYear) && row.month.slice(5) <= cutoffMonth
+  })
+
+  const annual = [previousYear, currentYear].map((year) => {
+    const rows = comparable.filter((row) => row.month.startsWith(year))
+    return {
+      year,
+      kg: rows.reduce((sum, row) => sum + row.kg, 0),
+      total: roundCurrency(rows.reduce((sum, row) => sum + row.total, 0)),
+    }
+  })
+  const trend = Array.from({ length: Number(cutoffMonth) }, (_, index) => {
+    const month = String(index + 1).padStart(2, '0')
+    const totalFor = (year: string) => comparable
+      .filter((row) => row.month === `${year}-${month}`)
+      .reduce((sum, row) => sum + row.kg, 0)
+    return { month, kgPrevious: totalFor(previousYear), kgCurrent: totalFor(currentYear) }
+  })
+
+  return { currentYear, previousYear, cutoffMonth, records, annual, trend }
 }
 
 /** Per-integrado 2% retention ledger — derived from real Settlement records, never EmittedInvoice copies. */

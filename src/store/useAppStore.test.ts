@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { useAppStore } from './useAppStore'
 import { createInitialState } from './initialState'
 import { calculatePriceDiscrepancy, getApplicableTariff } from '../domain/invoices'
-import { selectRetentionLedger, selectWeeklyCashForecast } from './selectors'
+import { selectFeedYearComparison, selectRetentionLedger, selectWeeklyCashForecast } from './selectors'
 
 beforeEach(() => {
   useAppStore.setState({ ...createInitialState(), toast: null, lastSimulatedInvoiceId: null })
@@ -372,6 +372,24 @@ describe('seed consistency', () => {
     expect(history.some((row) => row.month.startsWith('2025-'))).toBe(true)
     expect(history.some((row) => row.month.startsWith('2026-'))).toBe(true)
     expect(history.every((row) => row.integratedId > 0 && row.feedType.length > 0)).toBe(true)
+  })
+
+  it('provides a paid example with theoretical and real payment dates', () => {
+    expect(useAppStore.getState().payments.find((payment) => payment.id === 'PAY-6001')).toMatchObject({
+      status: 'paid', dueDate: '2026-07-05', paidAt: '2026-07-08',
+    })
+  })
+
+  it('compares feed consumption over the same months and includes newly validated invoices', () => {
+    const before = selectFeedYearComparison(useAppStore.getState())
+    const currentBefore = before.annual.find((row) => row.year === before.currentYear)!
+    expect(before.cutoffMonth).toBe('07')
+    expect(before.trend).toHaveLength(7)
+
+    useAppStore.getState().validateInvoice('7091')
+    const after = selectFeedYearComparison(useAppStore.getState())
+    const currentAfter = after.annual.find((row) => row.year === after.currentYear)!
+    expect(currentAfter.kg).toBe(currentBefore.kg + 9400)
   })
 })
 

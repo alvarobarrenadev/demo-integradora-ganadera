@@ -6,6 +6,7 @@ import { PageHeader } from '../components/common/PageHeader'
 import { Modal } from '../components/common/Modal'
 import { fmtEUR, fmtPricePerKg } from '../utils/currency'
 import { fmtNumber } from '../utils/dates'
+import { selectFeedYearComparison } from '../store/selectors'
 
 type Tab = 'consumos' | 'tarifas' | 'analisis'
 type Consumption = { kg: number; base: number; freight: number }
@@ -213,36 +214,15 @@ function TarifasView() {
 
 function AnalisisView() {
   const state = useAppStore()
+  const comparison = selectFeedYearComparison(state)
   const [month, setMonth] = useState('2026-07')
-  const months = [...new Set(state.feedConsumptionHistory.map((row) => row.month))].sort().reverse()
-  const monthRows = state.feedConsumptionHistory.filter((row) => row.month === month)
+  const months = [...new Set(comparison.records.map((row) => row.month))].sort().reverse()
+  const monthRows = comparison.records.filter((row) => row.month === month)
   const monthKg = monthRows.reduce((sum, row) => sum + row.kg, 0)
   const monthTotal = monthRows.reduce((sum, row) => sum + row.total, 0)
 
-  const annual = useMemo(() => {
-    const map = new Map<string, { kg: number; total: number }>()
-    for (const row of state.feedConsumptionHistory) {
-      const year = row.month.slice(0, 4)
-      const current = map.get(year) ?? { kg: 0, total: 0 }
-      map.set(year, { kg: current.kg + row.kg, total: current.total + row.total })
-    }
-    return [...map.entries()].sort(([a], [b]) => a.localeCompare(b))
-  }, [state.feedConsumptionHistory])
-
-  const trend = useMemo(() => {
-    const map = new Map<string, { month: string; kg2025: number; kg2026: number }>()
-    for (const row of state.feedConsumptionHistory) {
-      const monthNumber = row.month.slice(5)
-      const point = map.get(monthNumber) ?? { month: monthNumber, kg2025: 0, kg2026: 0 }
-      if (row.month.startsWith('2025')) point.kg2025 += row.kg
-      if (row.month.startsWith('2026')) point.kg2026 += row.kg
-      map.set(monthNumber, point)
-    }
-    return [...map.values()].sort((a, b) => a.month.localeCompare(b.month))
-  }, [state.feedConsumptionHistory])
-
-  const previous = annual.find(([year]) => year === '2025')?.[1]
-  const current = annual.find(([year]) => year === '2026')?.[1]
+  const previous = comparison.annual.find((row) => row.year === comparison.previousYear)
+  const current = comparison.annual.find((row) => row.year === comparison.currentYear)
   const yoy = previous && current ? ((current.kg - previous.kg) / previous.kg) * 100 : null
 
   return (
@@ -259,28 +239,28 @@ function AnalisisView() {
         <FeedKpi label={`Kg ${month}`} value={fmtNumber(monthKg)} />
         <FeedKpi label={`Coste ${month}`} value={fmtEUR(monthTotal)} />
         <FeedKpi label="Coste efectivo" value={monthKg ? fmtPricePerKg(monthTotal / monthKg) : '—'} />
-        <FeedKpi label="Variación anual kg" value={yoy == null ? '—' : `${yoy >= 0 ? '+' : ''}${yoy.toFixed(1)}%`} />
+        <FeedKpi label={`Variación interanual · hasta mes ${comparison.cutoffMonth}`} value={yoy == null ? '—' : `${yoy >= 0 ? '+' : ''}${yoy.toFixed(1)}%`} />
       </div>
       <div className="grid-2">
         <div className="card">
-          <div className="section-title">Consumo mensual: 2025 frente a 2026</div>
+          <div className="section-title">Consumo mensual: {comparison.previousYear} frente a {comparison.currentYear}</div>
           <ResponsiveContainer width="100%" height={260}>
-            <LineChart data={trend}>
+            <LineChart data={comparison.trend}>
               <XAxis dataKey="month" tick={{ fontSize: 11, fill: 'var(--color-text-muted)' }} />
               <YAxis hide />
               <Tooltip formatter={(value) => `${fmtNumber(Number(value))} kg`} contentStyle={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', color: 'var(--color-text)' }} />
               <Legend />
-              <Line type="monotone" dataKey="kg2025" name="2025" stroke="var(--color-text-muted)" strokeWidth={2} dot={false} />
-              <Line type="monotone" dataKey="kg2026" name="2026" stroke="var(--color-accent)" strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="kgPrevious" name={comparison.previousYear} stroke="var(--color-text-muted)" strokeWidth={2} dot={false} />
+              <Line type="monotone" dataKey="kgCurrent" name={comparison.currentYear} stroke="var(--color-accent)" strokeWidth={2} dot={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>
         <div className="card">
-          <div className="section-title">Resumen anual</div>
+          <div className="section-title">Acumulado comparable · enero a mes {comparison.cutoffMonth}</div>
           <div className="data-table-wrap">
             <table className="data-table">
               <thead><tr><th>Año</th><th className="cell-num">Kg</th><th className="cell-num">Coste</th><th className="cell-num">€/kg</th></tr></thead>
-              <tbody>{annual.map(([year, values]) => <tr key={year}><td className="cell-strong">{year}</td><td className="cell-num">{fmtNumber(values.kg)}</td><td className="cell-num">{fmtEUR(values.total)}</td><td className="cell-num">{fmtPricePerKg(values.total / values.kg)}</td></tr>)}</tbody>
+              <tbody>{comparison.annual.map((values) => <tr key={values.year}><td className="cell-strong">{values.year}</td><td className="cell-num">{fmtNumber(values.kg)}</td><td className="cell-num">{fmtEUR(values.total)}</td><td className="cell-num">{values.kg ? fmtPricePerKg(values.total / values.kg) : '—'}</td></tr>)}</tbody>
             </table>
           </div>
         </div>

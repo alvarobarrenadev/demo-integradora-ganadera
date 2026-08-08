@@ -75,6 +75,7 @@ function CebaSummary() {
   const ranking = useMemo(
     () =>
       state.cebas
+        .filter((c) => c.status === 'closed')
         .map((c) => ({ ceba: c, conversion: calculateConversion(c) }))
         .filter((r): r is { ceba: Ceba; conversion: number } => r.conversion != null)
         .sort((a, b) => a.conversion - b.conversion),
