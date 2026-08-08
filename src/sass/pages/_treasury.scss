@@ -2,7 +2,7 @@
 
 .forecast-grid {
   display: grid;
-  font-size: 12px;
+  font-size: 12.5px;
 }
 
 .forecast-grid--weeks4 {
@@ -12,7 +12,7 @@
 
 .forecast-grid__label {
   color: v.$color-text-muted;
-  padding: 8px 0;
+  padding: 11px 8px;
 
   &--strong {
     font-weight: 700;
@@ -22,8 +22,9 @@
 
 .forecast-grid__cell {
   text-align: center;
-  padding: 8px 0;
+  padding: 11px 8px;
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
 
   &--muted {
     color: v.$color-text-faint;

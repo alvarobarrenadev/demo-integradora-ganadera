@@ -5,6 +5,7 @@ interface NavItem {
   to: string
   label: string
   icon: React.ReactNode
+  section?: string
 }
 
 const iconProps = { width: 16, height: 16, viewBox: '0 0 24 24', fill: 'none', strokeWidth: 1.7 }
@@ -13,6 +14,7 @@ const NAV_ITEMS: NavItem[] = [
   {
     to: '/',
     label: 'Panel general',
+    section: 'Operaciones',
     icon: (
       <svg {...iconProps}>
         <rect x="3" y="3" width="8" height="8" rx="1.5" />
@@ -48,6 +50,7 @@ const NAV_ITEMS: NavItem[] = [
   {
     to: '/pienso',
     label: 'Pienso y tarifas',
+    section: 'Producción',
     icon: (
       <svg {...iconProps}>
         <path d="M4 20c4-1 5-6 5-10" />
@@ -83,6 +86,7 @@ const NAV_ITEMS: NavItem[] = [
   {
     to: '/integrados',
     label: 'Integrados',
+    section: 'Gestión',
     icon: (
       <svg {...iconProps}>
         <circle cx="8" cy="8" r="3" />
@@ -168,16 +172,18 @@ export function Sidebar({ open, onNavigate }: SidebarProps) {
 
       <div className="sidebar-nav">
         {NAV_ITEMS.map((item) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            end={item.to === '/'}
-            onClick={onNavigate}
-            className={({ isActive }) => `sidebar-link${isActive ? ' is-active' : ''}`}
-          >
-            {item.icon}
-            <span>{item.label}</span>
-          </NavLink>
+          <div className="sidebar-nav__item" key={item.to}>
+            {item.section ? <div className="sidebar-nav__section">{item.section}</div> : null}
+            <NavLink
+              to={item.to}
+              end={item.to === '/'}
+              onClick={onNavigate}
+              className={({ isActive }) => `sidebar-link${isActive ? ' is-active' : ''}`}
+            >
+              {item.icon}
+              <span>{item.label}</span>
+            </NavLink>
+          </div>
         ))}
       </div>
 

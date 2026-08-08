@@ -24,5 +24,5 @@ export function StatusBadge({ status, label, variant }: StatusBadgeProps) {
   const resolved = STATUS_MAP[status]
   const finalVariant = variant ?? resolved?.variant ?? 'neutral'
   const finalLabel = label ?? resolved?.label ?? status
-  return <span className={`badge badge--${finalVariant}`}>{finalLabel}</span>
+  return <span className={`badge badge--${finalVariant}`}><span className="badge__dot" aria-hidden="true" />{finalLabel}</span>
 }

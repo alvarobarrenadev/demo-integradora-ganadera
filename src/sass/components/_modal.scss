@@ -3,7 +3,8 @@
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(20, 24, 22, 0.35);
+  background: rgba(9, 14, 11, 0.58);
+  backdrop-filter: blur(3px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -13,22 +14,24 @@
 
 .modal {
   background: v.$color-surface;
+  border: 1px solid v.$color-border;
   border-radius: 14px;
   padding: 26px 28px;
   width: 400px;
   max-width: 100%;
   box-shadow: v.$shadow-modal;
+  animation: modalIn 0.18s ease-out;
 }
 
 .modal__title {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 700;
   color: v.$color-text;
   margin-bottom: 6px;
 }
 
 .modal__body {
-  font-size: 12.5px;
+  font-size: 13px;
   color: v.$color-text-muted;
   margin-bottom: v.$space-4;
 }
@@ -43,9 +46,11 @@
   position: fixed;
   bottom: 26px;
   right: 26px;
-  color: #fff;
+  color: v.$color-text;
+  background: v.$color-surface;
+  border: 1px solid v.$color-border;
   border-radius: v.$radius-lg;
-  padding: 14px 18px;
+  padding: 15px 18px;
   width: 340px;
   max-width: calc(100vw - 40px);
   box-shadow: v.$shadow-toast;
@@ -56,19 +61,33 @@
 }
 
 .toast--success {
-  background: v.$color-text;
+  .toast__icon {
+    background: v.$color-accent-tint;
+    color: v.$color-success;
+  }
 }
 
 .toast--error {
-  background: v.$color-danger;
+  .toast__icon {
+    background: v.$color-danger-tint;
+    color: v.$color-danger;
+  }
 }
 
 .toast--warning {
-  background: v.$color-warning-strong;
+  .toast__icon {
+    background: v.$color-warning-tint;
+    color: v.$color-warning-strong;
+  }
 }
 
 .toast__icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
   flex: none;
+  display: grid;
+  place-items: center;
   font-weight: 700;
 }
 
@@ -79,17 +98,26 @@
 
 .toast__description {
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.76);
+  color: v.$color-text-muted;
   margin-top: 2px;
 }
 
 .processing-modal {
   background: v.$color-surface;
+  border: 1px solid v.$color-border;
   border-radius: 14px;
   padding: 28px 32px;
   width: 320px;
   box-shadow: v.$shadow-modal;
   text-align: center;
+  animation: modalIn 0.18s ease-out;
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
 }
 
 .processing-spinner {

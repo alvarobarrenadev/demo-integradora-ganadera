@@ -23,8 +23,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 v.$space-6;
+  padding: 0 28px;
   gap: v.$space-4;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.025);
 
   @media (max-width: v.$bp-tablet) {
     padding: 0 v.$space-4;
@@ -35,8 +36,8 @@
   display: none;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 38px;
+  height: 38px;
   border-radius: v.$radius-md;
   color: v.$color-text-muted;
   flex: none;
@@ -50,6 +51,21 @@
   }
 }
 
+.app-header__context {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header__eyebrow {
+  color: v.$color-text-faint;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
 .app-header__breadcrumb {
   font-size: 11.5px;
   color: v.$color-text-faint;
@@ -57,9 +73,10 @@
 }
 
 .app-header__title {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: v.$color-text;
+  line-height: 1.35;
 }
 
 .header-icon {
@@ -69,7 +86,7 @@
 .app-header__actions {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   flex: none;
 }
 
@@ -77,8 +94,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: 38px;
+  height: 38px;
   border-radius: v.$radius-md;
   color: v.$color-text-muted;
 
@@ -88,12 +105,75 @@
   }
 }
 
+.environment-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: v.$color-text-muted;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 6px 10px;
+  border: 1px solid v.$color-border;
+  border-radius: v.$radius-pill;
+
+  > span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: v.$color-success;
+    box-shadow: 0 0 0 3px v.$color-accent-tint;
+  }
+}
+
+.header-user {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border-left: 1px solid v.$color-border;
+  padding-left: 14px;
+}
+
+.header-user__copy {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.header-user__name {
+  color: v.$color-text;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.header-user__role {
+  color: v.$color-text-faint;
+  font-size: 10.5px;
+}
+
 .app-content {
   flex: 1;
   overflow: auto;
-  padding: 26px 28px 60px;
+  padding: 32px 32px 64px;
+
+  > * {
+    width: 100%;
+    max-width: 1600px;
+    margin-inline: auto;
+  }
 
   @media (max-width: v.$bp-tablet) {
     padding: 18px 16px 40px;
+  }
+}
+
+@media (max-width: v.$bp-tablet) {
+  .app-header__context,
+  .environment-badge,
+  .header-user__copy {
+    display: none;
+  }
+
+  .app-header__actions {
+    margin-left: auto;
   }
 }

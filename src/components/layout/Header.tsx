@@ -1,3 +1,4 @@
+import { useLocation } from 'react-router-dom'
 import { useTheme } from '../../hooks/useTheme'
 
 interface HeaderProps {
@@ -6,6 +7,8 @@ interface HeaderProps {
 
 export function Header({ onMenuClick }: HeaderProps) {
   const { theme, toggleTheme } = useTheme()
+  const { pathname } = useLocation()
+  const section = ROUTE_TITLES.find(([path]) => path === '/' ? pathname === '/' : pathname.startsWith(path))?.[1] ?? 'Valdeón Gestión'
 
   return (
     <header className="app-header">
@@ -16,8 +19,12 @@ export function Header({ onMenuClick }: HeaderProps) {
           <line x1="3" y1="18" x2="21" y2="18" />
         </svg>
       </button>
-      <div className="flex-1" />
+      <div className="app-header__context">
+        <span className="app-header__eyebrow">Espacio de trabajo</span>
+        <span className="app-header__title">{section}</span>
+      </div>
       <div className="app-header__actions">
+        <span className="environment-badge"><span aria-hidden="true" /> Demo activa</span>
         <button
           type="button"
           className="theme-toggle"
@@ -36,12 +43,28 @@ export function Header({ onMenuClick }: HeaderProps) {
             </svg>
           )}
         </button>
-        <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} className="header-icon" aria-hidden="true">
-          <path d="M6 8a6 6 0 1 1 12 0c0 3.5 1 5.5 2 7H4c1-1.5 2-3.5 2-7z" />
-          <path d="M10 20a2 2 0 004 0" />
-        </svg>
-        <div className="avatar">M</div>
+        <div className="header-user">
+          <div className="avatar">M</div>
+          <div className="header-user__copy">
+            <span className="header-user__name">Mario</span>
+            <span className="header-user__role">Administrador</span>
+          </div>
+        </div>
       </div>
     </header>
   )
 }
+
+const ROUTE_TITLES: [string, string][] = [
+  ['/facturas-emitidas', 'Facturas emitidas'],
+  ['/transportistas', 'Transportistas'],
+  ['/contabilidad', 'Contabilidad'],
+  ['/proveedores', 'Proveedores'],
+  ['/integrados', 'Integrados'],
+  ['/logistica', 'Logística'],
+  ['/tesoreria', 'Tesorería'],
+  ['/facturas', 'Facturas'],
+  ['/pienso', 'Pienso y tarifas'],
+  ['/cebas', 'Cebas'],
+  ['/', 'Panel general'],
+]

@@ -35,10 +35,11 @@
 .mt-4 { margin-top: v.$space-4; }
 
 .section-title {
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 700;
   color: v.$color-text;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  letter-spacing: -0.01em;
 
   &.section-title--tight {
     margin-bottom: 10px;

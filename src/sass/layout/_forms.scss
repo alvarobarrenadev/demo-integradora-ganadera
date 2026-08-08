@@ -3,12 +3,12 @@
 .field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
 }
 
 .field__label {
-  font-size: 11.5px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 650;
   color: v.$color-text-muted;
 }
 
@@ -17,10 +17,12 @@
   border: 1px solid v.$color-border;
   background: v.$color-surface;
   border-radius: v.$radius-md;
-  padding: 7px 10px;
-  font-size: 12.5px;
+  min-height: 40px;
+  padding: 8px 11px;
+  font-size: 13px;
   color: v.$color-text-body;
   outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 
   &::placeholder {
     color: v.$color-text-faint;
@@ -28,15 +30,15 @@
   }
 
   &:focus-visible {
-    outline: 2px solid v.$color-accent;
-    outline-offset: 1px;
+    outline: none;
     border-color: v.$color-accent;
+    box-shadow: 0 0 0 3px v.$color-accent-tint;
   }
 }
 
 .search-field {
   width: 100%;
-  max-width: 320px;
+  max-width: 380px;
 }
 
 .search-input-wrap {

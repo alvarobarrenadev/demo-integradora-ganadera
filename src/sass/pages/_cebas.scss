@@ -3,15 +3,15 @@
 .ceba-metric-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 14px;
-  margin-bottom: 20px;
+  gap: 16px;
+  margin-bottom: 24px;
 }
 
 .conversion-card {
   border: 1px solid v.$color-accent-tint-border;
   background: v.$color-accent-tint;
   border-radius: v.$radius-lg;
-  padding: 14px 16px;
+  padding: 18px 20px;
 }
 
 .conversion-card__value {
@@ -28,12 +28,24 @@
 .timeline-list {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 0;
 }
 
 .timeline-item {
   display: flex;
   gap: 12px;
+  position: relative;
+  padding-bottom: 20px;
+
+  &:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    bottom: 0;
+    left: 3px;
+    width: 1px;
+    background: v.$color-border;
+  }
 }
 
 .timeline-item__title {
@@ -48,6 +60,8 @@
   margin-top: 5px;
   flex: none;
   background: v.$color-text-faint;
+  z-index: 1;
+  box-shadow: 0 0 0 4px v.$color-surface;
 }
 
 .settlement-title {

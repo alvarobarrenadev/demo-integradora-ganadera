@@ -1,5 +1,5 @@
 .movement-form {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   display: flex;
   gap: 14px;
   align-items: flex-end;
@@ -22,5 +22,15 @@
   margin-top: 10px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+}
+
+@media (max-width: 48rem) {
+  .movement-form .field,
+  .movement-form__field--narrow,
+  .movement-form__field--medium,
+  .movement-form__field--wide,
+  .movement-form .btn {
+    width: 100%;
+  }
 }

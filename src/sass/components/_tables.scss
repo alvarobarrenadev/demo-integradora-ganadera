@@ -6,29 +6,31 @@
   background: v.$color-surface;
   overflow: hidden;
   overflow-x: auto;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.035);
+  scrollbar-gutter: stable;
 }
 
 .data-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 12.5px;
+  font-size: 13px;
   min-width: 640px;
 
   thead th {
     text-align: left;
     background: v.$color-surface-alt;
     border-bottom: 1px solid v.$color-border;
-    padding: 9px 16px;
-    font-size: 10.5px;
+    padding: 11px 16px;
+    font-size: 10.75px;
     font-weight: 700;
     color: v.$color-text-faint;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.045em;
     text-transform: uppercase;
     white-space: nowrap;
   }
 
   tbody td {
-    padding: 11px 16px;
+    padding: 13px 16px;
     border-bottom: 1px solid v.$color-border-light;
     color: v.$color-text-body;
     vertical-align: middle;
@@ -43,6 +45,10 @@
 
     &:hover {
       background: v.$color-surface-alt;
+
+      .cell-strong {
+        color: v.$color-accent;
+      }
     }
 
     &:focus-visible {
@@ -58,6 +64,7 @@
 
   .cell-num {
     text-align: right;
+    font-variant-numeric: tabular-nums;
   }
 }
 
