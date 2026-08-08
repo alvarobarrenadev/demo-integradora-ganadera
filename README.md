@@ -1,13 +1,31 @@
 # Valdeón Gestión
 
-Demo funcional de un sistema de gestión centralizado para **Agroganadera Valdeón SL**, una integradora porcina ficticia. Ver `CLAUDE.md` para la especificación completa del proyecto.
+![Valdeón Gestión](public/favicon/og-image.png)
 
-## Arranque
+Demo funcional de un sistema de gestión centralizado para **Agroganadera Valdeón SL**, una integradora porcina ficticia. Centraliza facturación, tesorería, pienso, cebas, logística y contabilidad con datos simulados y reglas de negocio reales.
 
-Desde un clon limpio, un solo comando:
+La interfaz es responsive, comienza en modo claro, incluye modo oscuro y puede instalarse como PWA. El estado se conserva en `localStorage` y puede restablecerse desde la propia aplicación.
+
+> Consulta [`CLAUDE.md`](CLAUDE.md) para la especificación funcional y técnica completa.
+
+## Funcionalidades principales
+
+- Recepción simulada, revisión y validación de facturas.
+- Actualización atómica de tesorería, consumo, ceba, contabilidad y archivo.
+- Tarifas por proveedor, tipo de pienso y mes, con detección de discrepancias.
+- Seguimiento y cierre de cebas con cálculo de conversión.
+- Liquidaciones, retenciones, facturas emitidas y generación de PDF.
+- Previsión semanal de cobros y pagos.
+- Gestión de logística, integrados, proveedores, transportistas y alertas DVR.
+- Persistencia local, reinicio reproducible de la demo y funcionamiento offline.
+
+## Instalación y arranque
+
+Necesitas Node.js y `pnpm`. Desde un clon limpio:
 
 ```bash
-pnpm install && pnpm dev
+pnpm install
+pnpm dev
 ```
 
 Abre `http://localhost:5173`. El estado se persiste en `localStorage`; usa **Restablecer demo** en la barra lateral para volver siempre a los mismos datos de partida.
@@ -42,18 +60,33 @@ Casos a verificar en la misma pasada:
 ## Comandos
 
 ```bash
-pnpm test    # vitest
-pnpm lint    # eslint
-pnpm build   # tsc -b && vite build
-pnpm deploy  # publica dist/ en la rama gh-pages
+pnpm dev      # servidor de desarrollo
+pnpm test     # tests de dominio con Vitest
+pnpm lint     # análisis estático con ESLint
+pnpm build    # TypeScript + build de producción
+pnpm preview  # previsualiza el build localmente
+pnpm deploy   # publica dist/ en la rama gh-pages
 ```
+
+## PWA
+
+El service worker se registra únicamente en producción. Precarga la aplicación y sus recursos esenciales, guarda los recursos visitados y permite abrir la interfaz sin conexión después de una primera carga correcta.
+
+Para probar la instalación localmente:
+
+```bash
+pnpm build
+pnpm preview
+```
+
+Abre la URL indicada por Vite en un navegador compatible y usa la opción **Instalar aplicación**. Los iconos, el manifiesto, la imagen social y el logotipo están en `public/`.
 
 ## GitHub Pages
 
-La aplicación se publica en:
+El proyecto está configurado para publicarse en:
 
 ```text
 https://alvarobarrenadev.github.io/demo-integradora-ganadera/
 ```
 
-El despliegue usa rutas hash para que la navegación y las recargas funcionen correctamente en GitHub Pages.
+El despliegue usa el `base` del repositorio y rutas hash para que los recursos, la navegación y las recargas funcionen correctamente en GitHub Pages.

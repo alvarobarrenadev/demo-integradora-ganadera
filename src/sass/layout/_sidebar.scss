@@ -52,14 +52,17 @@
 .sidebar-brand__mark {
   width: 36px;
   height: 36px;
-  border-radius: v.$radius-md;
-  background: v.$color-accent;
   flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: v.$color-on-accent;
-  box-shadow: 0 4px 12px rgba(16, 58, 35, 0.18);
+
+  img {
+    display: block;
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+  }
 }
 
 .sidebar-brand__name {

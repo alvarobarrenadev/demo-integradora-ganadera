@@ -157,12 +157,7 @@ export function Sidebar({ open, onNavigate }: SidebarProps) {
     <nav className={`sidebar${open ? ' is-open' : ''}`} aria-label="Navegación principal">
       <div className="sidebar-brand">
         <div className="sidebar-brand__mark" aria-hidden="true">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-            <rect x="3" y="3" width="8" height="8" rx="1" />
-            <rect x="13" y="3" width="8" height="8" rx="1" />
-            <rect x="3" y="13" width="8" height="8" rx="1" />
-            <rect x="13" y="13" width="8" height="8" rx="1" />
-          </svg>
+          <img src={`${import.meta.env.BASE_URL}logo.png`} alt="" />
         </div>
         <div>
           <div className="sidebar-brand__name">Valdeón Gestión</div>
