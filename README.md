@@ -29,7 +29,7 @@ pnpm install
 pnpm dev
 ```
 
-Abre `http://localhost:5173`. El estado se persiste en `localStorage`; usa **Restablecer demo** en la barra lateral para volver siempre a los mismos datos de partida. El selector de la cabecera permite probar los perfiles simulados **Mario** (administrador), **Dirección** (solo lectura) y **Contable** (exportaciones), sin autenticación real.
+Abre `http://localhost:5173`. El estado se persiste en `localStorage`; usa **Restablecer demo** en la barra lateral para volver siempre a los mismos datos de partida. El selector del menú lateral permite probar los perfiles simulados **Mario** (administrador), **Dirección** (solo lectura) y **Contable** (exportaciones), sin autenticación real.
 
 ## Decisiones técnicas (resumen)
 

@@ -15,6 +15,7 @@ import {
 import { KpiCard } from '../components/common/KpiCard'
 import { fmtEUR } from '../utils/currency'
 import { fmtNumber } from '../utils/dates'
+import { ROLE_PROFILES } from '../domain/roles'
 
 export function DashboardPage() {
   const navigate = useNavigate()
@@ -77,7 +78,7 @@ export function DashboardPage() {
 
   return (
     <div>
-      <h1 className="dashboard-greeting">Buenos días, Mario</h1>
+      <h1 className="dashboard-greeting">Buenos días, {ROLE_PROFILES[state.currentRole].name}</h1>
       <p className="page-subtitle mb-6">
         Han entrado {fmtNumber(invoicesThisMonth.length)} facturas este mes.{' '}
         <strong>{invoicesThisMonth.length - pending.length}</strong> se han procesado correctamente y{' '}

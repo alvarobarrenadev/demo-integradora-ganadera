@@ -78,7 +78,7 @@ pnpm
 Deployment:
 
 ```text
-Vercel
+GitHub Pages
 ```
 
 Do not introduce a backend unless explicitly requested.
