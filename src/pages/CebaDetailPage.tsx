@@ -37,7 +37,7 @@ export function CebaDetailPage() {
             <h1 className="page-title">Ceba {ceba.id}</h1>
             <StatusBadge status={ceba.status} />
           </div>
-          <p className="page-subtitle">#{ceba.integratedId} · {integrated?.name}</p>
+          <p className="page-subtitle">#{ceba.integratedId} · {integrated?.name} · {ceba.origin} · {ceba.feedType}</p>
         </div>
         <div className="page-header__actions">
           {ceba.status !== 'closed' ? (
@@ -70,14 +70,6 @@ export function CebaDetailPage() {
       <div className="card">
         <div className="section-title">Historial de la ceba</div>
         <div className="timeline-list">
-          <div className="timeline-item">
-            <div className="timeline-dot" />
-            <div>
-              <div className="kpi-card__label kpi-card__label--flush">{formatDateEs(ceba.entryDate)}</div>
-              <div className="timeline-item__title">Entrada de animales</div>
-              <div className="page-subtitle">{fmtNumber(ceba.animalsEntered)} cabezas · {fmtNumber(ceba.entryKg)} kg · Origen {ceba.origin}</div>
-            </div>
-          </div>
           {movements.map((m) => (
             <div className="timeline-item" key={m.id}>
               <div className="timeline-dot" />
@@ -85,7 +77,11 @@ export function CebaDetailPage() {
                 <div className="kpi-card__label kpi-card__label--flush">{formatDateEs(m.date)}</div>
                 <div className="timeline-item__title">{m.type === 'salida' ? 'Salida a matadero' : 'Entrada de animales'}</div>
                 <div className="page-subtitle">
-                  {fmtNumber(m.animals)} cabezas · {fmtNumber(m.kg)} kg{m.matadero ? ` · ${m.matadero}` : ''}
+                  {fmtNumber(m.animals)} cabezas · {fmtNumber(m.kg)} kg
+                  {m.matadero ? ` · ${m.matadero}` : ''}
+                  {m.origin ? ` · Origen ${m.origin}` : ''}
+                  {m.feedType ? ` · ${m.feedType}` : ''}
+                  {m.albaran ? ` · ${m.albaran}` : ''}
                 </div>
               </div>
             </div>

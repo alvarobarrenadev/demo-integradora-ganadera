@@ -4,9 +4,10 @@ Demo funcional de un sistema de gesti√≥n centralizado para **Agroganadera Valde√
 
 ## Arranque
 
+Desde un clon limpio, un solo comando:
+
 ```bash
-pnpm install
-pnpm dev
+pnpm install && pnpm dev
 ```
 
 Abre `http://localhost:5173`. El estado se persiste en `localStorage`; usa **Restablecer demo** en la barra lateral para volver siempre a los mismos datos de partida.

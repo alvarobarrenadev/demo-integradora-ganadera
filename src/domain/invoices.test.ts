@@ -16,8 +16,8 @@ describe('generateInternalInvoiceNumber', () => {
     expect(generateInternalInvoiceNumber('2026-05-15', seedInvoices)).toBe('5212')
   })
 
-  it('starts a brand-new month at 001', () => {
-    expect(generateInternalInvoiceNumber('2026-09-01', seedInvoices)).toBe('9001')
+  it('starts August at 8001 when no August invoice exists', () => {
+    expect(generateInternalInvoiceNumber('2026-08-01', seedInvoices)).toBe('8001')
   })
 
   it('does not misparse two-digit months against single-digit ones', () => {
@@ -33,7 +33,11 @@ describe('generateInternalInvoiceNumber', () => {
 describe('calculateFreight', () => {
   it('charges freight for P1-P3', () => {
     const p1 = providers.find((p) => p.id === 'P1')!
+    const p2 = providers.find((p) => p.id === 'P2')!
+    const p3 = providers.find((p) => p.id === 'P3')!
     expect(calculateFreight(p1, 10000)).toBeCloseTo(870, 2)
+    expect(calculateFreight(p2, 10000)).toBeCloseTo(800, 2)
+    expect(calculateFreight(p3, 10000)).toBeCloseTo(750, 2)
   })
 
   it('charges no freight for P4/P5', () => {

@@ -5,7 +5,7 @@ import type { Integrated } from '../types/integrated'
 
 function makeCeba(overrides: Partial<Ceba>): Ceba {
   return {
-    id: 'C', integratedId: 1, origin: 'x', entryDate: '2026-01-01',
+    id: 'C', integratedId: 1, origin: 'x', feedType: 'Pienso', entryDate: '2026-01-01',
     animalsEntered: 100, entryKg: 2000, animalsExited: 100, exitKg: 12000,
     feedKg: 26000, feedCost: 8000, medicationCost: 0, deaths: 0, status: 'closed',
     ...overrides,

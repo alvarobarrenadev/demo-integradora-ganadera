@@ -19,6 +19,16 @@ export default defineConfig({
       '@vendors': sassDir('vendors'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('/recharts/') || id.includes('/d3-')) return 'charts'
+          if (id.includes('/react/') || id.includes('/react-dom/') || id.includes('/react-router')) return 'react'
+        },
+      },
+    },
+  },
   test: {
     environment: 'node',
     include: ['src/**/*.test.ts'],

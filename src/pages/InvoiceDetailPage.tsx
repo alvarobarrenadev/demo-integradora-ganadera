@@ -25,6 +25,9 @@ export function InvoiceDetailPage() {
   const integrated = state.integrateds.find((i) => i.id === invoice.integratedId)
   const tariff = invoice.feedType ? getApplicableTariff(invoice.providerId, invoice.feedType, invoice.date, state.tariffs) : undefined
   const discrepancy = calculatePriceDiscrepancy(invoice, tariff)
+  const activeCeba = integrated?.activeCebaId
+    ? state.cebas.find((ceba) => ceba.id === integrated.activeCebaId && ceba.status !== 'closed')
+    : undefined
 
   const isValidated = invoice.status === 'validated'
   const subtotal = invoice.kg != null && invoice.invoicedPricePerKg != null ? invoice.kg * invoice.invoicedPricePerKg : 0
@@ -42,11 +45,27 @@ export function InvoiceDetailPage() {
           {!isValidated && discrepancy.hasDiscrepancy ? (
             <>
               <button type="button" className="btn btn-danger" disabled title="Simulado — sin backend real">Reclamar a proveedor</button>
-              <button type="button" className="btn btn-primary" onClick={() => validateInvoice(invoice.id)}>Aceptar sobreprecio</button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                disabled={!activeCeba}
+                title={!activeCeba ? 'No se puede propagar: el integrado no tiene una ceba activa' : undefined}
+                onClick={() => validateInvoice(invoice.id)}
+              >
+                Aceptar sobreprecio
+              </button>
             </>
           ) : null}
           {!isValidated && !discrepancy.hasDiscrepancy ? (
-            <button type="button" className="btn btn-primary" onClick={() => validateInvoice(invoice.id)}>Validar factura</button>
+            <button
+              type="button"
+              className="btn btn-primary"
+              disabled={!activeCeba}
+              title={!activeCeba ? 'No se puede propagar: el integrado no tiene una ceba activa' : undefined}
+              onClick={() => validateInvoice(invoice.id)}
+            >
+              Validar factura
+            </button>
           ) : null}
         </div>
       </div>

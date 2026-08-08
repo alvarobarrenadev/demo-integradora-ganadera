@@ -4,6 +4,12 @@ import { providers } from './providers'
 import { roundCurrency } from '../../utils/currency'
 
 const feedProviderIds = providers.filter((p) => p.category === 'feed').map((p) => p.id)
+const integratedIdsByProvider: Record<string, number[]> = {
+  P1: [1, 9, 26, 40],
+  P2: [12, 14, 22],
+  P3: [18, 32],
+  P4: [5, 29, 33],
+}
 
 function averagePriceForProviderMonth(providerId: string, month: string): number {
   const rows = tariffs.filter((t) => t.providerId === providerId && t.month === month)
@@ -34,12 +40,16 @@ export const feedConsumptionHistory: FeedConsumptionRecord[] = monthsJan2025ToJu
     const provider = providers.find((p) => p.id === providerId)!
     const kg = 8000 + ((monthIndex * 137 + providerIndex * 911) % 4000)
     const price = averagePriceForProviderMonth(providerId, month)
+    const providerTariffs = tariffs.filter((t) => t.providerId === providerId && t.month === month)
+    const integratedIds = integratedIdsByProvider[providerId]
     const feedBaseAmount = roundCurrency(kg * price)
     const freight = roundCurrency(kg * provider.freightRatePerKg)
     return {
       id: `feedhist-${providerId}-${month}`,
       month,
       providerId,
+      integratedId: integratedIds[monthIndex % integratedIds.length],
+      feedType: providerTariffs[monthIndex % providerTariffs.length]?.feedType ?? 'Pienso',
       kg,
       feedBaseAmount,
       freight,

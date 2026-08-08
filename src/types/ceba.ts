@@ -5,6 +5,7 @@ export interface Ceba {
   integratedId: number
 
   origin: string
+  feedType: string
 
   entryDate: string
 

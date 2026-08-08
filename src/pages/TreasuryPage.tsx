@@ -16,10 +16,9 @@ export function TreasuryPage() {
 
   const paymentsNext7 = selectPaymentsNext7Days(state)
   const paymentsNext7Total = paymentsNext7.reduce((s, p) => s + p.amount, 0)
-  const receivablesTotal = state.receivables.filter((r) => !r.paidAt).reduce((s, r) => s + r.amount, 0)
-  const pendingPaymentsTotal = state.payments.filter((p) => p.status !== 'paid').reduce((s, p) => s + p.amount, 0)
   const weekly = selectWeeklyCashForecast(state, 4)
-  const netNext7 = receivablesTotal - pendingPaymentsTotal
+  const receivablesNext7Total = weekly[0]?.receivables ?? 0
+  const netNext7 = weekly[0]?.net ?? 0
 
   return (
     <div>
@@ -35,7 +34,7 @@ export function TreasuryPage() {
       {tab === 'resumen' ? (
         <ResumenTab
           paymentsNext7Total={paymentsNext7Total}
-          receivablesTotal={receivablesTotal}
+          receivablesNext7Total={receivablesNext7Total}
           netNext7={netNext7}
           weekly={weekly}
         />
@@ -49,12 +48,12 @@ export function TreasuryPage() {
 
 function ResumenTab({
   paymentsNext7Total,
-  receivablesTotal,
+  receivablesNext7Total,
   netNext7,
   weekly,
 }: {
   paymentsNext7Total: number
-  receivablesTotal: number
+  receivablesNext7Total: number
   netNext7: number
   weekly: ReturnType<typeof selectWeeklyCashForecast>
 }) {
@@ -64,7 +63,7 @@ function ResumenTab({
   return (
     <>
       <div className="kpi-grid">
-        <div className="kpi-card"><div className="kpi-card__label">Cobros pendientes</div><div className="kpi-card__value">{fmtEUR(receivablesTotal)}</div></div>
+        <div className="kpi-card"><div className="kpi-card__label">Cobros próximos 7 días</div><div className="kpi-card__value">{fmtEUR(receivablesNext7Total)}</div></div>
         <div className="kpi-card"><div className="kpi-card__label">Pagos próximos 7 días</div><div className="kpi-card__value">{fmtEUR(paymentsNext7Total)}</div></div>
         <div className="kpi-card"><div className="kpi-card__label">Neto próximo 7d</div><div className="kpi-card__value">{fmtEUR(netNext7)}</div></div>
       </div>
@@ -114,6 +113,29 @@ function PagosTab() {
     { key: 'ben', header: 'Beneficiario', render: (p) => <span className="cell-strong">{p.beneficiary}</span> },
     { key: 'src', header: 'Origen', render: (p) => (p.sourceType === 'settlement' ? 'Liquidación' : 'Factura') },
     { key: 'due', header: 'Vencimiento', render: (p) => formatDateEs(p.dueDate) },
+    {
+      key: 'term',
+      header: 'Plazo teórico',
+      numeric: true,
+      render: (p) => {
+        const sourceDate = p.sourceType === 'invoice'
+          ? state.invoices.find((invoice) => invoice.id === p.sourceId)?.date
+          : state.settlements.find((settlement) => settlement.id === p.sourceId)?.generatedAt
+        return sourceDate ? `${daysBetween(sourceDate, p.dueDate)} días` : '—'
+      },
+    },
+    {
+      key: 'actual',
+      header: 'Plazo real',
+      numeric: true,
+      render: (p) => {
+        if (!p.paidAt) return 'Pendiente'
+        const sourceDate = p.sourceType === 'invoice'
+          ? state.invoices.find((invoice) => invoice.id === p.sourceId)?.date
+          : state.settlements.find((settlement) => settlement.id === p.sourceId)?.generatedAt
+        return sourceDate ? `${daysBetween(sourceDate, p.paidAt)} días` : '—'
+      },
+    },
     { key: 'bank', header: 'Banco', render: (p) => p.bankId ?? '—' },
     { key: 'method', header: 'Forma de pago', render: (p) => p.paymentMethod },
     { key: 'status', header: 'Estado', render: (p) => <StatusBadge status={p.status} /> },
@@ -121,6 +143,10 @@ function PagosTab() {
   ]
   const rows = [...state.payments].sort((a, b) => a.dueDate.localeCompare(b.dueDate))
   return <DataTable columns={columns} rows={rows} rowKey={(p) => p.id} />
+}
+
+function daysBetween(start: string, end: string): number {
+  return Math.round((Date.parse(`${end}T00:00:00Z`) - Date.parse(`${start}T00:00:00Z`)) / 86_400_000)
 }
 
 function CobrosTab() {

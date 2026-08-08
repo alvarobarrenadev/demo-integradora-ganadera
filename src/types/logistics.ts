@@ -20,4 +20,5 @@ export interface LogisticsMovement {
 
   // entrada-only
   origin?: string
+  feedType?: string
 }

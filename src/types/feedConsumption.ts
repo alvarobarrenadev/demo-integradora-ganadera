@@ -8,6 +8,8 @@ export interface FeedConsumptionRecord {
   /** YYYY-MM */
   month: string
   providerId: string
+  integratedId: number
+  feedType: string
   kg: number
   feedBaseAmount: number
   freight: number

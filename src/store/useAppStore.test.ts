@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { useAppStore } from './useAppStore'
 import { createInitialState } from './initialState'
 import { calculatePriceDiscrepancy, getApplicableTariff } from '../domain/invoices'
-import { selectRetentionLedger } from './selectors'
+import { selectRetentionLedger, selectWeeklyCashForecast } from './selectors'
 
 beforeEach(() => {
   useAppStore.setState({ ...createInitialState(), toast: null, lastSimulatedInvoiceId: null })
@@ -228,18 +228,19 @@ describe('selectRetentionLedger', () => {
 
 describe('addCebaEntry / addCebaExit / addLogisticsMovement', () => {
   it('addCebaEntry atomically creates the Ceba, its LogisticsMovement, and sets activeCebaId', () => {
-    useAppStore.getState().addCebaEntry({ integratedId: 1, date: '2026-07-01', origin: 'Test', animals: 500, kg: 9500 })
+    useAppStore.getState().addCebaEntry({ integratedId: 1, date: '2026-07-01', origin: 'Test', feedType: 'Cebo Final', animals: 500, kg: 9500 })
     const state = useAppStore.getState()
     const integrated = state.integrateds.find((i) => i.id === 1)!
     const ceba = state.cebas.find((c) => c.id === integrated.activeCebaId)!
     expect(ceba.animalsEntered).toBe(500)
+    expect(ceba.feedType).toBe('Cebo Final')
     const movement = state.logisticsMovements.find((m) => m.cebaId === ceba.id)!
     expect(movement.type).toBe('entrada')
   })
 
   it('addCebaEntry refuses when the integrated already has an active ceba', () => {
     const before = useAppStore.getState()
-    useAppStore.getState().addCebaEntry({ integratedId: 14, date: '2026-07-01', origin: 'x', animals: 100, kg: 2000 })
+    useAppStore.getState().addCebaEntry({ integratedId: 14, date: '2026-07-01', origin: 'x', feedType: 'Cebo N-80', animals: 100, kg: 2000 })
     const after = useAppStore.getState()
     expect(after.cebas).toEqual(before.cebas)
     expect(after.toast?.variant).toBe('error')
@@ -288,6 +289,15 @@ describe('addCebaEntry / addCebaExit / addLogisticsMovement', () => {
     expect(after2).toEqual(after1)
     expect(useAppStore.getState().logisticsMovements.filter((m) => m.id === 'dup-1')).toHaveLength(1)
   })
+
+  it('rejects invalid or mismatched logistics data without mutating a ceba', () => {
+    const before = useAppStore.getState()
+    useAppStore.getState().addLogisticsMovement({
+      id: 'invalid-1', type: 'salida', date: '2026-07-15', integratedId: 14, cebaId: 'V-119', animals: 5, kg: 500,
+    })
+    expect(useAppStore.getState().cebas).toEqual(before.cebas)
+    expect(useAppStore.getState().toast?.variant).toBe('error')
+  })
 })
 
 describe('applyAugustTariffs', () => {
@@ -335,5 +345,53 @@ describe('seed consistency', () => {
       const payment = state.payments.find((p) => p.sourceType === 'invoice' && p.sourceId === invoice.id)
       expect(payment).toBeDefined()
     }
+  })
+
+  it('keeps every ceba entry and exit total aligned with logistics', () => {
+    const state = useAppStore.getState()
+    for (const ceba of state.cebas) {
+      const entry = state.logisticsMovements.find((movement) => movement.type === 'entrada' && movement.cebaId === ceba.id)
+      expect(entry?.animals).toBe(ceba.animalsEntered)
+      expect(entry?.kg).toBe(ceba.entryKg)
+      const exits = state.logisticsMovements.filter((movement) => movement.type === 'salida' && movement.cebaId === ceba.id)
+      expect(exits.reduce((sum, movement) => sum + movement.animals, 0)).toBe(ceba.animalsExited)
+      expect(exits.reduce((sum, movement) => sum + movement.kg, 0)).toBe(ceba.exitKg)
+    }
+  })
+
+  it('contains the literal client and receivable examples from the brief', () => {
+    const state = useAppStore.getState()
+    expect(state.clients.find((client) => client.id === 'CLI-2')).toMatchObject({ paymentMethod: 'Confirming', avgCollectionDays: 45 })
+    expect(state.clients.find((client) => client.id === 'CLI-3')).toMatchObject({ paymentMethod: 'Pagaré', bankId: 'Banco Duero', avgCollectionDays: 60 })
+    expect(state.receivables.some((receivable) => receivable.clientId === 'CLI-1' && receivable.amount === 43300)).toBe(true)
+    expect(state.receivables.some((receivable) => receivable.clientId === 'CLI-2' && receivable.amount === 22400 && receivable.dueDate === '2026-07-06')).toBe(true)
+  })
+
+  it('has real consumption history for annual and prior-year reporting', () => {
+    const history = useAppStore.getState().feedConsumptionHistory
+    expect(history.some((row) => row.month.startsWith('2025-'))).toBe(true)
+    expect(history.some((row) => row.month.startsWith('2026-'))).toBe(true)
+    expect(history.every((row) => row.integratedId > 0 && row.feedType.length > 0)).toBe(true)
+  })
+})
+
+describe('complete demo flow', () => {
+  it('propagates the simulated invoice through V-118 settlement and weekly cash forecast', () => {
+    const before = useAppStore.getState().cebas.find((ceba) => ceba.id === 'V-118')!
+    useAppStore.getState().simulateIncomingInvoice()
+    const invoiceId = useAppStore.getState().lastSimulatedInvoiceId!
+    useAppStore.getState().validateInvoice(invoiceId)
+
+    const afterValidation = useAppStore.getState()
+    expect(afterValidation.invoices.find((invoice) => invoice.id === invoiceId)?.status).toBe('validated')
+    expect(afterValidation.payments.some((payment) => payment.sourceId === invoiceId)).toBe(true)
+    expect(afterValidation.cebas.find((ceba) => ceba.id === 'V-118')?.feedKg).toBe(before.feedKg + 18200)
+
+    useAppStore.getState().closeCeba('V-118')
+    const settlement = useAppStore.getState().generateSettlement('V-118')!
+    const payment = useAppStore.getState().payments.find((item) => item.sourceId === settlement.id)!
+    expect(payment.amount).toBe(settlement.netAmount)
+    expect(payment.dueDate).toBe('2026-07-25')
+    expect(selectWeeklyCashForecast(useAppStore.getState(), 2)[1].payments).toBeGreaterThanOrEqual(payment.amount)
   })
 })

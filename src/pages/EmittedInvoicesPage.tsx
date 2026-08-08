@@ -3,7 +3,6 @@ import { PageHeader } from '../components/common/PageHeader'
 import { selectRetentionLedger } from '../store/selectors'
 import { fmtEUR } from '../utils/currency'
 import { formatDateEs } from '../utils/dates'
-import { downloadEmittedInvoicePdf } from '../utils/pdf'
 
 export function EmittedInvoicesPage() {
   const state = useAppStore()
@@ -14,12 +13,13 @@ export function EmittedInvoicesPage() {
   )
   const retentionLedger = selectRetentionLedger(state)
 
-  const handleGenerate = (settlementId: string) => {
+  const handleGenerate = async (settlementId: string) => {
     const emitted = generateEmittedInvoice(settlementId)
     if (!emitted) return
     const settlement = state.settlements.find((s) => s.id === settlementId)
     const integrated = state.integrateds.find((i) => i.id === emitted.integratedId)
     if (!settlement || !integrated) return
+    const { downloadEmittedInvoicePdf } = await import('../utils/pdf')
     downloadEmittedInvoicePdf({
       emittedNumber: emitted.emittedNumber,
       integratedName: `#${integrated.id} ${integrated.name}`,
@@ -32,12 +32,13 @@ export function EmittedInvoicesPage() {
     })
   }
 
-  const handleRedownload = (emittedId: string) => {
+  const handleRedownload = async (emittedId: string) => {
     const emitted = state.emittedInvoices.find((e) => e.id === emittedId)
     if (!emitted) return
     const settlement = state.settlements.find((s) => s.id === emitted.settlementId)
     const integrated = state.integrateds.find((i) => i.id === emitted.integratedId)
     if (!settlement || !integrated) return
+    const { downloadEmittedInvoicePdf } = await import('../utils/pdf')
     downloadEmittedInvoicePdf({
       emittedNumber: emitted.emittedNumber,
       integratedName: `#${integrated.id} ${integrated.name}`,

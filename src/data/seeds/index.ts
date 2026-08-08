@@ -41,6 +41,5 @@ export const seeds = {
   emittedInvoices: [] as EmittedInvoice[],
   transporters,
   trucks,
+  feedConsumptionHistory,
 }
-
-export { feedConsumptionHistory }

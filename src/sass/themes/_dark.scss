@@ -1,7 +1,4 @@
-// Dark theme overrides. Three states, matching the toggle in the header:
-// - no explicit choice (system): follows prefers-color-scheme
-// - explicit "claro": stays on the :root light values from _default.scss
-// - explicit "oscuro": wins regardless of system preference
+// Dark theme is opt-in from the header. Light is always the first-run default.
 
 @mixin dark-palette {
   color-scheme: dark;
@@ -35,12 +32,6 @@
   --color-info-tint: #1e2a3d;
 
   --color-success: #4ade80;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    @include dark-palette;
-  }
 }
 
 :root[data-theme='dark'] {

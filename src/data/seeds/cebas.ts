@@ -23,11 +23,12 @@ export const cebas: Ceba[] = [
     id: 'V-112',
     integratedId: 26,
     origin: 'Cría Segovia SL',
+    feedType: 'Valdeón 30 Extra',
     entryDate: '2025-11-04',
     animalsEntered: 1110,
     entryKg: 21400,
-    animalsExited: 1110 - 14,
-    exitKg: 127900,
+    animalsExited: v112Exits.animals,
+    exitKg: v112Exits.kg,
     feedKg: 248100,
     feedCost: 82900,
     medicationCost: 1850,
@@ -39,11 +40,12 @@ export const cebas: Ceba[] = [
     id: 'V-115',
     integratedId: 9,
     origin: 'importación NL',
+    feedType: 'Precebo Plus',
     entryDate: '2025-12-02',
     animalsEntered: 980,
     entryKg: 19100,
-    animalsExited: 980 - 17,
-    exitKg: 112400,
+    animalsExited: v115Exits.animals,
+    exitKg: v115Exits.kg,
     feedKg: 228700,
     feedCost: 76400,
     medicationCost: 2310,
@@ -58,6 +60,7 @@ export const cebas: Ceba[] = [
     id: 'V-118',
     integratedId: 14,
     origin: 'Cría Segovia SL',
+    feedType: 'Cebo N-80',
     entryDate: '2026-03-02',
     animalsEntered: 1180,
     entryKg: 23000,
@@ -73,6 +76,7 @@ export const cebas: Ceba[] = [
     id: 'V-119',
     integratedId: 18,
     origin: 'importación NL',
+    feedType: 'Engorde V-60',
     entryDate: '2026-04-18',
     animalsEntered: 1020,
     entryKg: 20100,
@@ -88,6 +92,7 @@ export const cebas: Ceba[] = [
     id: 'V-121',
     integratedId: 22,
     origin: 'Cría Palentina',
+    feedType: 'Cebo N-80',
     entryDate: '2026-06-02',
     animalsEntered: 1020,
     entryKg: 19900,
@@ -103,6 +108,7 @@ export const cebas: Ceba[] = [
     id: 'V-122',
     integratedId: 5,
     origin: 'importación NL',
+    feedType: 'Cebo AF-Max',
     entryDate: '2026-06-22',
     animalsEntered: 860,
     entryKg: 16800,
@@ -117,8 +123,8 @@ export const cebas: Ceba[] = [
 ]
 
 // Sanity checks (fail fast at module load if the derivation is ever wrong).
-if (v112Exits.kg !== 25200) throw new Error('V-112 logistics aggregate drifted from its seeded movement')
-if (v115Exits.kg !== 36890) throw new Error('V-115 logistics aggregate drifted from its seeded movement')
+if (v112Exits.animals !== 1096 || v112Exits.kg !== 127900) throw new Error('V-112 logistics aggregate drifted from its ceba')
+if (v115Exits.animals !== 963 || v115Exits.kg !== 112400) throw new Error('V-115 logistics aggregate drifted from its ceba')
 if (v118Exits.animals !== 1159 || v118Exits.kg !== 118100) {
   throw new Error('V-118 logistics aggregate drifted from its seeded movements')
 }

@@ -28,9 +28,11 @@ export interface NewCebaEntryInput {
   integratedId: number
   date: string
   origin: string
+  feedType: string
   animals: number
   kg: number
   albaran?: string
+  archiveStatus?: LogisticsMovement['archiveStatus']
 }
 
 export interface NewCebaExitInput {
@@ -43,6 +45,7 @@ export interface NewCebaExitInput {
   transportType?: 'interno' | 'externo'
   driver?: string
   albaran?: string
+  archiveStatus?: LogisticsMovement['archiveStatus']
 }
 
 interface AppActions {
@@ -208,8 +211,16 @@ export const useAppStore = create<AppState>()(
       addLogisticsMovement: (movement) => {
         const state = get()
         if (state.logisticsMovements.some((m) => m.id === movement.id)) return // idempotent duplicate guard
+        if (!movement.date || movement.animals <= 0 || movement.kg <= 0) {
+          set({ toast: toast('error', 'Datos no válidos', 'La fecha, los animales y los kilos deben ser válidos.') })
+          return
+        }
 
         if (movement.type === 'entrada') {
+          if (!movement.origin?.trim() || !movement.feedType?.trim()) {
+            set({ toast: toast('error', 'Datos incompletos', 'Indica el origen y el tipo de pienso.') })
+            return
+          }
           const integrated = state.integrateds.find((i) => i.id === movement.integratedId)
           if (!integrated) return
           const current = integrated.activeCebaId
@@ -223,6 +234,7 @@ export const useAppStore = create<AppState>()(
             id: movement.cebaId,
             integratedId: movement.integratedId,
             origin: movement.origin ?? '',
+            feedType: movement.feedType ?? '',
             entryDate: movement.date,
             animalsEntered: movement.animals,
             entryKg: movement.kg,
@@ -247,7 +259,10 @@ export const useAppStore = create<AppState>()(
 
         // salida — the single canonical "apply exit" helper, shared with addCebaExit.
         const ceba = state.cebas.find((c) => c.id === movement.cebaId)
-        if (!ceba) return
+        if (!ceba || ceba.integratedId !== movement.integratedId) {
+          set({ toast: toast('error', 'Ceba no válida', 'La salida no corresponde con el integrado seleccionado.') })
+          return
+        }
         if (ceba.status === 'closed') {
           set({ toast: toast('error', 'No se puede registrar', 'Esta ceba ya está cerrada.') })
           return
@@ -270,8 +285,9 @@ export const useAppStore = create<AppState>()(
           animals: input.animals,
           kg: input.kg,
           origin: input.origin,
+          feedType: input.feedType,
           albaran: input.albaran,
-          archiveStatus: 'pendiente',
+          archiveStatus: input.archiveStatus ?? 'pendiente',
         })
       },
 
@@ -291,7 +307,7 @@ export const useAppStore = create<AppState>()(
           transportType: input.transportType,
           driver: input.driver,
           albaran: input.albaran,
-          archiveStatus: 'pendiente',
+          archiveStatus: input.archiveStatus ?? 'pendiente',
         })
       },
 
@@ -384,7 +400,7 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'valdeon-gestion-demo',
-      version: 1,
+      version: 2,
       // zustand's default storage option references `window.localStorage`
       // literally, which throws (and silently disables the whole `.persist`
       // API) outside a browser-like global `window` — reference the global
@@ -405,6 +421,7 @@ export const useAppStore = create<AppState>()(
         emittedInvoices: state.emittedInvoices,
         transporters: state.transporters,
         trucks: state.trucks,
+        feedConsumptionHistory: state.feedConsumptionHistory,
       }),
     },
   ),

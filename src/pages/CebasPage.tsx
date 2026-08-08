@@ -82,15 +82,18 @@ function CebaSummary() {
   )
 
   const originMatrix = useMemo(() => {
-    const map = new Map<string, number>()
+    const map = new Map<string, { total: number; count: number }>()
     for (const c of state.cebas) {
-      const integrated = state.integrateds.find((i) => i.id === c.integratedId)
-      const provider = integrated ? state.providers.find((p) => p.id === integrated.feedProviderId) : undefined
-      const key = `${c.origin} × ${provider?.name ?? '—'}`
-      map.set(key, (map.get(key) ?? 0) + 1)
+      const conversion = calculateConversion(c)
+      if (conversion == null) continue
+      const key = `${c.origin} × ${c.feedType}`
+      const current = map.get(key) ?? { total: 0, count: 0 }
+      map.set(key, { total: current.total + conversion, count: current.count + 1 })
     }
     return [...map.entries()]
-  }, [state.cebas, state.integrateds, state.providers])
+      .map(([key, value]) => ({ key, count: value.count, conversion: value.total / value.count }))
+      .sort((a, b) => a.conversion - b.conversion)
+  }, [state.cebas])
 
   return (
     <div className="grid-2">
@@ -108,10 +111,10 @@ function CebaSummary() {
       <div className="card">
         <div className="section-title">Origen del lechón × pienso</div>
         <div className="kv-list">
-          {originMatrix.map(([key, count]) => (
-            <div key={key} className="kv-row">
-              <span className="kv-row__label">{key}</span>
-              <span className="kv-row__value">{count}</span>
+          {originMatrix.map((row, index) => (
+            <div key={row.key} className="kv-row">
+              <span className="kv-row__label">{index + 1}. {row.key} · {row.count} {row.count === 1 ? 'ceba' : 'cebas'}</span>
+              <span className="kv-row__value">{row.conversion.toFixed(2)}</span>
             </div>
           ))}
         </div>
