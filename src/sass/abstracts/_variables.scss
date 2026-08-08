@@ -1,0 +1,64 @@
+// Breakpoints
+$bp-tablet: 48rem; // 768px
+$bp-tablet-horizontal: 64rem; // 1024px
+$bp-desktop: 75rem; // 1200px
+$bp-desktop-xl: 90rem; // 1440px
+
+// Fonts — matches system-design/Valdeon Gestion.dc.html
+$primary-font: -apple-system, "Helvetica Neue", Arial, sans-serif;
+$secondary-font: Georgia, serif; // simulated invoice/PDF documents only
+
+// Colors — CSS custom properties, so the theme can swap at runtime (light/dark).
+// Actual values are defined once in themes/_default.scss (:root, light) and
+// themes/_dark.scss (dark overrides) — never hardcode a hex outside those two files.
+$color-bg: var(--color-bg);
+$color-surface: var(--color-surface);
+$color-surface-alt: var(--color-surface-alt);
+$color-border: var(--color-border);
+$color-border-light: var(--color-border-light);
+$color-text: var(--color-text);
+$color-text-body: var(--color-text-body);
+$color-text-muted: var(--color-text-muted);
+$color-text-faint: var(--color-text-faint);
+
+$color-accent: var(--color-accent);
+$color-accent-hover: var(--color-accent-hover);
+$color-accent-tint: var(--color-accent-tint);
+$color-accent-tint-border: var(--color-accent-tint-border);
+
+$color-danger: var(--color-danger);
+$color-danger-strong: var(--color-danger-strong);
+$color-danger-tint: var(--color-danger-tint);
+$color-danger-tint-border: var(--color-danger-tint-border);
+
+$color-warning: var(--color-warning);
+$color-warning-strong: var(--color-warning-strong);
+$color-warning-tint: var(--color-warning-tint);
+
+$color-info: var(--color-info);
+$color-info-tint: var(--color-info-tint);
+
+$color-success: var(--color-success);
+
+// Radius
+$radius-sm: 6px;
+$radius-md: 8px;
+$radius-lg: 10px;
+$radius-pill: 20px;
+
+// Spacing (4px base)
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 12px;
+$space-4: 16px;
+$space-5: 20px;
+$space-6: 24px;
+$space-8: 32px;
+
+// Shadows
+$shadow-modal: 0 20px 50px rgba(0, 0, 0, 0.2);
+$shadow-toast: 0 10px 30px rgba(0, 0, 0, 0.25);
+
+// Layout
+$sidebar-width: 224px;
+$header-height: 56px;

@@ -1,0 +1,50 @@
+@use '@abstracts/variables' as v;
+
+// Small, composable layout utilities — used instead of inline styles.
+// Kept intentionally minimal: only the patterns that actually repeat across pages.
+
+.flex { display: flex; }
+.flex-col { display: flex; flex-direction: column; }
+.flex-wrap { flex-wrap: wrap; }
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.justify-between { justify-content: space-between; }
+.justify-end { justify-content: flex-end; }
+.text-right { text-align: right; }
+.flex-1 { flex: 1; }
+.flex-none { flex: none; }
+.w-full { width: 100%; }
+
+.gap-1 { gap: v.$space-1; }
+.gap-2 { gap: v.$space-2; }
+.gap-3 { gap: v.$space-3; }
+.gap-4 { gap: v.$space-4; }
+.gap-5 { gap: v.$space-5; }
+.gap-6 { gap: v.$space-6; }
+
+.mb-1 { margin-bottom: v.$space-1; }
+.mb-2 { margin-bottom: v.$space-2; }
+.mb-3 { margin-bottom: v.$space-3; }
+.mb-4 { margin-bottom: v.$space-4; }
+.mb-5 { margin-bottom: v.$space-5; }
+.mb-6 { margin-bottom: v.$space-6; }
+
+.mt-1 { margin-top: v.$space-1; }
+.mt-2 { margin-top: v.$space-2; }
+.mt-3 { margin-top: v.$space-3; }
+.mt-4 { margin-top: v.$space-4; }
+
+.section-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: v.$color-text;
+  margin-bottom: 12px;
+
+  &.section-title--tight {
+    margin-bottom: 10px;
+  }
+
+  &.section-title--spaced {
+    margin: 18px 0 10px;
+  }
+}

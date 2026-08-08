@@ -1,0 +1,35 @@
+@use '@abstracts/variables' as v;
+
+.tabs {
+  display: flex;
+  gap: 22px;
+  border-bottom: 1px solid v.$color-border;
+  margin: 18px 0 16px;
+}
+
+.tab {
+  padding: 8px 2px;
+  font-size: 13px;
+  font-weight: 600;
+  color: v.$color-text-faint;
+  border-bottom: 2px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  &.is-active {
+    color: v.$color-text;
+    border-bottom-color: v.$color-accent;
+  }
+
+  &:hover:not(.is-active) {
+    color: v.$color-text-body;
+  }
+}
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}

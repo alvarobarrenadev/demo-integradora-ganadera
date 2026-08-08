@@ -1,0 +1,47 @@
+// Dark theme overrides. Three states, matching the toggle in the header:
+// - no explicit choice (system): follows prefers-color-scheme
+// - explicit "claro": stays on the :root light values from _default.scss
+// - explicit "oscuro": wins regardless of system preference
+
+@mixin dark-palette {
+  color-scheme: dark;
+
+  --color-bg: #14171a;
+  --color-surface: #1c2023;
+  --color-surface-alt: #22262a;
+  --color-border: #2e3338;
+  --color-border-light: #262a2e;
+  --color-text: #eef1f0;
+  --color-text-body: #c7cdd1;
+  --color-text-muted: #9aa1a6;
+  --color-text-faint: #969fa5;
+
+  --color-accent: #3fae76;
+  --color-accent-hover: #56c88c;
+  --color-accent-tint: #1c2f24;
+  --color-accent-tint-border: #2b4536;
+
+  --color-danger: #f87171;
+  --color-danger-strong: #ef4444;
+  --color-danger-tint: #3a1f1f;
+  --color-danger-tint-border: #5c2b2b;
+
+  --color-warning: #fbbf24;
+  --color-warning-strong: #f59e0b;
+  --color-warning-tint: #3a2f14;
+
+  --color-info: #60a5fa;
+  --color-info-tint: #1e2a3d;
+
+  --color-success: #4ade80;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    @include dark-palette;
+  }
+}
+
+:root[data-theme='dark'] {
+  @include dark-palette;
+}

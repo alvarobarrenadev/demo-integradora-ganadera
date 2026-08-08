@@ -1,0 +1,66 @@
+@use '@abstracts/variables' as v;
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: v.$radius-md;
+  font-size: 12.5px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  white-space: nowrap;
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid v.$color-accent;
+    outline-offset: 2px;
+  }
+}
+
+.btn-primary {
+  background: v.$color-accent;
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background: v.$color-accent-hover;
+  }
+}
+
+.btn-secondary {
+  background: v.$color-surface;
+  border-color: v.$color-border;
+  color: v.$color-text-body;
+
+  &:hover:not(:disabled) {
+    background: v.$color-bg;
+  }
+}
+
+.btn-ghost {
+  background: transparent;
+  color: v.$color-text-muted;
+
+  &:hover:not(:disabled) {
+    background: v.$color-bg;
+  }
+}
+
+.btn-danger {
+  background: v.$color-surface;
+  border-color: v.$color-danger-tint-border;
+  color: v.$color-danger;
+
+  &:hover:not(:disabled) {
+    background: v.$color-danger-tint;
+  }
+}
+
+.btn-block {
+  width: 100%;
+}

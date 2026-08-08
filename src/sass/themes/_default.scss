@@ -1,0 +1,44 @@
+@use '@abstracts/variables' as v;
+
+// Light theme (default) — the only place these hex values are written.
+:root {
+  color-scheme: light;
+
+  --color-bg: #f7f8f7;
+  --color-surface: #ffffff;
+  --color-surface-alt: #fafbfa;
+  --color-border: #e5e7eb;
+  --color-border-light: #f0f1f2;
+  --color-text: #161b22;
+  --color-text-body: #374151;
+  --color-text-muted: #8a8f98;
+  --color-text-faint: #9aa1ab;
+
+  --color-accent: #1c4b34;
+  --color-accent-hover: #163a29;
+  --color-accent-tint: #eaf5ee;
+  --color-accent-tint-border: #cfe6d8;
+
+  --color-danger: #b42318;
+  --color-danger-strong: #dc2626;
+  --color-danger-tint: #fdeceb;
+  --color-danger-tint-border: #f6c6c1;
+
+  --color-warning: #92650b;
+  --color-warning-strong: #b45309;
+  --color-warning-tint: #fef3d9;
+
+  --color-info: #1d4ed8;
+  --color-info-tint: #eaf1fb;
+
+  --color-success: #1f6b3f;
+}
+
+html {
+  font-family: v.$primary-font;
+}
+
+body {
+  overflow-x: hidden;
+  line-height: 1.6;
+}

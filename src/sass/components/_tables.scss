@@ -1,0 +1,69 @@
+@use '@abstracts/variables' as v;
+
+.data-table-wrap {
+  border: 1px solid v.$color-border;
+  border-radius: v.$radius-lg;
+  background: v.$color-surface;
+  overflow: hidden;
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  min-width: 640px;
+
+  thead th {
+    text-align: left;
+    background: v.$color-surface-alt;
+    border-bottom: 1px solid v.$color-border;
+    padding: 9px 16px;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: v.$color-text-faint;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  tbody td {
+    padding: 11px 16px;
+    border-bottom: 1px solid v.$color-border-light;
+    color: v.$color-text-body;
+    vertical-align: middle;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  tbody tr.is-clickable {
+    cursor: pointer;
+
+    &:hover {
+      background: v.$color-surface-alt;
+    }
+
+    &:focus-visible {
+      outline: 2px solid v.$color-accent;
+      outline-offset: -2px;
+    }
+  }
+
+  .cell-strong {
+    font-weight: 700;
+    color: v.$color-text;
+  }
+
+  .cell-num {
+    text-align: right;
+  }
+}
+
+.table-empty {
+  padding: 32px 16px;
+  text-align: center;
+  color: v.$color-text-muted;
+  font-size: 12.5px;
+}

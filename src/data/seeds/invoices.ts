@@ -1,0 +1,258 @@
+import type { Invoice } from '../../types/invoice'
+
+/**
+ * Literal brief seed data (§15.4) — exact values, never altered.
+ * 7090 is the one deliberate price-discrepancy case; 5211 keeps its May
+ * numbering despite being seeded/arriving after the July batch.
+ */
+const givenInvoices: Invoice[] = [
+  {
+    id: '7088', internalNumber: '7088', supplierInvoiceNumber: '2026-4411',
+    providerId: 'P1', integratedId: 9,
+    date: '2026-07-10', receivedAt: '2026-07-10',
+    feedType: 'Valdeón 30 Extra', kg: 11800,
+    invoicedPricePerKg: 0.334, expectedPricePerKg: 0.334,
+    freight: 1026.6, total: 4967.8,
+    dueDate: '2026-08-09', paymentMethod: 'Transferencia', bankId: 'Banco Duero',
+    status: 'validated', sentToAccounting: true, archived: true,
+  },
+  {
+    id: '7089', internalNumber: '7089', supplierInvoiceNumber: 'F-26/0904',
+    providerId: 'P2', integratedId: 14,
+    date: '2026-07-11', receivedAt: '2026-07-11',
+    feedType: 'Cebo N-80', kg: 17940,
+    invoicedPricePerKg: 0.334, expectedPricePerKg: 0.334,
+    freight: 1435.2, total: 7427.16,
+    dueDate: '2026-08-10', paymentMethod: 'Transferencia', bankId: 'Caja Rural del Páramo',
+    status: 'validated', sentToAccounting: true, archived: true,
+  },
+  {
+    // Required discrepancy case: 24.600 kg × (0,342 − 0,334) = +196,80 €
+    id: '7090', internalNumber: '7090', supplierInvoiceNumber: '2026-4423',
+    providerId: 'P1', integratedId: 26,
+    date: '2026-07-13', receivedAt: '2026-07-13',
+    feedType: 'Valdeón 30 Extra', kg: 24600,
+    invoicedPricePerKg: 0.342, expectedPricePerKg: 0.334,
+    freight: 2140.2, total: 10553.4,
+    dueDate: '2026-08-12', paymentMethod: 'Transferencia', bankId: 'BanNorte',
+    status: 'discrepancy', sentToAccounting: false, archived: false,
+  },
+  {
+    id: '7091', internalNumber: '7091', supplierInvoiceNumber: 'AF-2026-812',
+    providerId: 'P4', integratedId: 5,
+    date: '2026-07-13', receivedAt: '2026-07-13',
+    feedType: 'Cebo AF-Max', kg: 9400,
+    invoicedPricePerKg: 0.327, expectedPricePerKg: 0.327,
+    freight: 0, total: 3073.8,
+    dueDate: '2026-08-12', paymentMethod: 'Transferencia', bankId: 'Caja Vega',
+    status: 'pending', sentToAccounting: false, archived: false,
+  },
+  {
+    id: '7092', internalNumber: '7092', supplierInvoiceNumber: 'V-2026-233',
+    providerId: 'P5', integratedId: 22,
+    date: '2026-07-13', receivedAt: '2026-07-13',
+    feedType: 'Medicado M-2', kg: 1450,
+    invoicedPricePerKg: 0.512, expectedPricePerKg: 0.512,
+    freight: 0, total: 742.4,
+    dueDate: '2026-07-28', paymentMethod: 'Transferencia', bankId: 'Banco Duero',
+    status: 'pending', sentToAccounting: false, archived: false,
+  },
+  {
+    id: '7093', internalNumber: '7093', supplierInvoiceNumber: 'PV-1187',
+    providerId: 'P3', integratedId: 18,
+    date: '2026-07-14', receivedAt: '2026-07-14',
+    feedType: 'Engorde V-60', kg: 13250,
+    invoicedPricePerKg: 0.331, expectedPricePerKg: 0.331,
+    freight: 993.75, total: 5379.5,
+    dueDate: '2026-08-13', paymentMethod: 'Transferencia', bankId: 'Caja Rural del Páramo',
+    status: 'pending', sentToAccounting: false, archived: false,
+  },
+  {
+    // Late-May invoice arriving/seeded in July — must keep its May numbering.
+    id: '5211', internalNumber: '5211', supplierInvoiceNumber: 'F-26/0698',
+    providerId: 'P2', integratedId: 12,
+    date: '2026-05-28', receivedAt: '2026-07-02',
+    feedType: 'Starter N-1', kg: 6200,
+    invoicedPricePerKg: 0.412, expectedPricePerKg: 0.412,
+    freight: 496, total: 3050.4,
+    dueDate: '2026-06-27', paymentMethod: 'Transferencia', bankId: 'BanNorte',
+    status: 'validated', sentToAccounting: true, archived: true,
+  },
+]
+
+/**
+ * Additional deterministic invoices (§ seed data plan). Every pending one
+ * targets an integrated with a real active/ready ceba (#5, #14, #18, #22),
+ * since validateInvoice is atomic and would otherwise visibly refuse.
+ * "Historical/validated" ones target other integrateds and come pre-seeded
+ * with their full workflow side effects — never replayed through
+ * validateInvoice at startup.
+ */
+const additionalHistorical: Invoice[] = [
+  {
+    id: '6001', internalNumber: '6001', supplierInvoiceNumber: 'PN-6011',
+    providerId: 'P1', integratedId: 1,
+    date: '2026-06-05', receivedAt: '2026-06-05',
+    feedType: 'Valdeón 30 Extra', kg: 12500,
+    invoicedPricePerKg: 0.331, expectedPricePerKg: 0.331,
+    freight: 1087.5, total: 5225,
+    dueDate: '2026-07-05', paymentMethod: 'Transferencia', bankId: 'Banco Duero',
+    status: 'validated', sentToAccounting: true, archived: true,
+  },
+  {
+    id: '6002', internalNumber: '6002', supplierInvoiceNumber: 'AF-2026-604',
+    providerId: 'P4', integratedId: 29,
+    date: '2026-06-10', receivedAt: '2026-06-10',
+    feedType: 'Precebo AF', kg: 8900,
+    invoicedPricePerKg: 0.398, expectedPricePerKg: 0.398,
+    freight: 0, total: 3542.2,
+    dueDate: '2026-07-25', paymentMethod: 'Transferencia', bankId: 'Caja Vega',
+    status: 'validated', sentToAccounting: true, archived: true,
+  },
+  {
+    id: '6003', internalNumber: '6003', supplierInvoiceNumber: 'AF-2026-611',
+    providerId: 'P4', integratedId: 33,
+    date: '2026-06-18', receivedAt: '2026-06-18',
+    feedType: 'Cebo AF-Max', kg: 7600,
+    invoicedPricePerKg: 0.325, expectedPricePerKg: 0.325,
+    freight: 0, total: 2470,
+    dueDate: '2026-07-28', paymentMethod: 'Transferencia', bankId: 'BanNorte',
+    status: 'validated', sentToAccounting: true, archived: true,
+  },
+  {
+    id: '6004', internalNumber: '6004', supplierInvoiceNumber: 'PN-6034',
+    providerId: 'P1', integratedId: 40,
+    date: '2026-06-22', receivedAt: '2026-06-22',
+    feedType: 'Cebo Final', kg: 15200,
+    invoicedPricePerKg: 0.318, expectedPricePerKg: 0.318,
+    freight: 1322.4, total: 6156,
+    dueDate: '2026-07-22', paymentMethod: 'Transferencia', bankId: 'Caja Rural del Páramo',
+    status: 'validated', sentToAccounting: true, archived: true,
+  },
+  {
+    id: '6005', internalNumber: '6005', supplierInvoiceNumber: 'PN-6041',
+    providerId: 'P1', integratedId: 9,
+    date: '2026-06-25', receivedAt: '2026-06-25',
+    feedType: 'Precebo Plus', kg: 9800,
+    invoicedPricePerKg: 0.405, expectedPricePerKg: 0.405,
+    freight: 852.6, total: 4821.6,
+    dueDate: '2026-07-25', paymentMethod: 'Transferencia', bankId: 'Banco Duero',
+    status: 'validated', sentToAccounting: true, archived: true,
+  },
+  {
+    id: '6006', internalNumber: '6006', supplierInvoiceNumber: 'PN-6052',
+    providerId: 'P1', integratedId: 26,
+    date: '2026-06-28', receivedAt: '2026-06-28',
+    feedType: 'Cebo Final', kg: 11000,
+    invoicedPricePerKg: 0.318, expectedPricePerKg: 0.318,
+    freight: 957, total: 4455,
+    dueDate: '2026-07-28', paymentMethod: 'Transferencia', bankId: 'Caja Vega',
+    status: 'validated', sentToAccounting: true, archived: true,
+  },
+  {
+    id: '6007', internalNumber: '6007', supplierInvoiceNumber: 'PV-1155',
+    providerId: 'P3', integratedId: 32,
+    date: '2026-06-30', receivedAt: '2026-06-30',
+    feedType: 'Engorde V-60', kg: 10400,
+    invoicedPricePerKg: 0.329, expectedPricePerKg: 0.329,
+    freight: 780, total: 4201.6,
+    dueDate: '2026-07-30', paymentMethod: 'Transferencia', bankId: 'BanNorte',
+    status: 'validated', sentToAccounting: true, archived: true,
+  },
+  {
+    // dueDate lands exactly on DEMO_REFERENCE_DATE — inside the "próximos 7 días" window.
+    id: '6008', internalNumber: '6008', supplierInvoiceNumber: 'F-26/0733',
+    providerId: 'P2', integratedId: 12,
+    date: '2026-06-15', receivedAt: '2026-06-15',
+    feedType: 'Cebo N-80', kg: 8700,
+    invoicedPricePerKg: 0.336, expectedPricePerKg: 0.336,
+    freight: 696, total: 3619.2,
+    dueDate: '2026-07-15', paymentMethod: 'Transferencia', bankId: 'Caja Rural del Páramo',
+    status: 'validated', sentToAccounting: true, archived: true,
+  },
+]
+
+const additionalPending: Invoice[] = [
+  {
+    id: '7094', internalNumber: '7094', supplierInvoiceNumber: 'F-26/0921',
+    providerId: 'P2', integratedId: 14,
+    date: '2026-07-05', receivedAt: '2026-07-05',
+    feedType: 'Starter N-1', kg: 6200,
+    invoicedPricePerKg: 0.408, expectedPricePerKg: 0.408,
+    freight: 496, total: 3025.6,
+    dueDate: '2026-08-04', paymentMethod: 'Transferencia', bankId: 'Banco Duero',
+    status: 'pending', sentToAccounting: false, archived: false,
+  },
+  {
+    id: '7095', internalNumber: '7095', supplierInvoiceNumber: 'PV-1162',
+    providerId: 'P3', integratedId: 18,
+    date: '2026-07-06', receivedAt: '2026-07-06',
+    feedType: 'Engorde V-60', kg: 9200,
+    invoicedPricePerKg: 0.331, expectedPricePerKg: 0.331,
+    freight: 690, total: 3735.2,
+    dueDate: '2026-08-05', paymentMethod: 'Transferencia', bankId: 'Caja Vega',
+    status: 'pending', sentToAccounting: false, archived: false,
+  },
+  {
+    id: '7096', internalNumber: '7096', supplierInvoiceNumber: 'F-26/0912',
+    providerId: 'P2', integratedId: 22,
+    date: '2026-07-07', receivedAt: '2026-07-07',
+    feedType: 'Cebo N-80', kg: 7300,
+    invoicedPricePerKg: 0.334, expectedPricePerKg: 0.334,
+    freight: 584, total: 3022.2,
+    dueDate: '2026-08-06', paymentMethod: 'Transferencia', bankId: 'BanNorte',
+    status: 'pending', sentToAccounting: false, archived: false,
+  },
+  {
+    id: '7097', internalNumber: '7097', supplierInvoiceNumber: 'AF-2026-820',
+    providerId: 'P4', integratedId: 5,
+    date: '2026-07-08', receivedAt: '2026-07-08',
+    feedType: 'Precebo AF', kg: 6800,
+    invoicedPricePerKg: 0.398, expectedPricePerKg: 0.398,
+    freight: 0, total: 2706.4,
+    dueDate: '2026-08-07', paymentMethod: 'Transferencia', bankId: 'Caja Rural del Páramo',
+    status: 'pending', sentToAccounting: false, archived: false,
+  },
+  {
+    id: '7098', internalNumber: '7098', supplierInvoiceNumber: 'F-26/0930',
+    providerId: 'P2', integratedId: 14,
+    date: '2026-07-09', receivedAt: '2026-07-09',
+    feedType: 'Cebo N-80', kg: 5400,
+    invoicedPricePerKg: 0.334, expectedPricePerKg: 0.334,
+    freight: 432, total: 2235.6,
+    dueDate: '2026-08-08', paymentMethod: 'Transferencia', bankId: 'Banco Duero',
+    status: 'pending', sentToAccounting: false, archived: false,
+  },
+  {
+    id: '7099', internalNumber: '7099', supplierInvoiceNumber: 'PV-1170',
+    providerId: 'P3', integratedId: 18,
+    date: '2026-07-10', receivedAt: '2026-07-10',
+    feedType: 'Engorde V-60', kg: 6100,
+    invoicedPricePerKg: 0.331, expectedPricePerKg: 0.331,
+    freight: 457.5, total: 2476.6,
+    dueDate: '2026-08-09', paymentMethod: 'Transferencia', bankId: 'Caja Vega',
+    status: 'pending', sentToAccounting: false, archived: false,
+  },
+  {
+    id: '7100', internalNumber: '7100', supplierInvoiceNumber: 'F-26/0945',
+    providerId: 'P2', integratedId: 22,
+    date: '2026-07-11', receivedAt: '2026-07-11',
+    feedType: 'Starter N-1', kg: 4800,
+    invoicedPricePerKg: 0.408, expectedPricePerKg: 0.408,
+    freight: 384, total: 2342.4,
+    dueDate: '2026-08-10', paymentMethod: 'Transferencia', bankId: 'BanNorte',
+    status: 'pending', sentToAccounting: false, archived: false,
+  },
+  {
+    id: '7101', internalNumber: '7101', supplierInvoiceNumber: 'AF-2026-835',
+    providerId: 'P4', integratedId: 5,
+    date: '2026-07-12', receivedAt: '2026-07-12',
+    feedType: 'Cebo AF-Max', kg: 7100,
+    invoicedPricePerKg: 0.327, expectedPricePerKg: 0.327,
+    freight: 0, total: 2321.7,
+    dueDate: '2026-08-11', paymentMethod: 'Transferencia', bankId: 'Caja Rural del Páramo',
+    status: 'pending', sentToAccounting: false, archived: false,
+  },
+]
+
+export const invoices: Invoice[] = [...givenInvoices, ...additionalHistorical, ...additionalPending]

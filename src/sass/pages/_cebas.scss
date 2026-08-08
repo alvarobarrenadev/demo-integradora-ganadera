@@ -1,0 +1,91 @@
+@use '@abstracts/variables' as v;
+
+.ceba-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.conversion-card {
+  border: 1px solid v.$color-accent-tint-border;
+  background: v.$color-accent-tint;
+  border-radius: v.$radius-lg;
+  padding: 14px 16px;
+}
+
+.conversion-card__value {
+  font-size: 22px;
+  font-weight: 700;
+  color: v.$color-success;
+}
+
+.metric-card__value {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.timeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 12px;
+}
+
+.timeline-item__title {
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.timeline-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 5px;
+  flex: none;
+  background: v.$color-text-faint;
+}
+
+.settlement-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.settlement-subtitle {
+  margin-bottom: 18px;
+}
+
+.settlement-summary {
+  max-width: 360px;
+}
+
+.settlement-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.kv-row {
+  &.kv-row--total {
+    border-top: 1px solid v.$color-border;
+    padding-top: 10px;
+    margin-top: 2px;
+  }
+}
+
+.kv-row__label--net {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: v.$color-text-faint;
+}
+
+.kv-row__value--net {
+  font-size: 19px;
+  font-weight: 700;
+}

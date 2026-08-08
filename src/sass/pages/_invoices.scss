@@ -1,0 +1,157 @@
+@use '@abstracts/variables' as v;
+
+// A simulated printed document — always renders as light paper with dark ink,
+// regardless of the app theme (a real printout doesn't switch to dark mode).
+.invoice-detail-doc {
+  border: 1px solid #eceeef;
+  border-radius: 6px;
+  padding: 26px 30px;
+  font-family: v.$secondary-font;
+  background: #fdfdfc;
+  color: #1a1a1a;
+}
+
+.invoice-doc-card__header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.invoice-doc__header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.invoice-doc__provider {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.invoice-doc__fine {
+  font-size: 10.5px;
+  color: #666;
+
+  &--mt {
+    margin-top: 4px;
+  }
+
+  &--mb {
+    margin-bottom: 18px;
+  }
+}
+
+.invoice-doc__meta {
+  text-align: right;
+  font-size: 11px;
+  color: #333;
+}
+
+.invoice-doc__line {
+  display: grid;
+  grid-template-columns: 1fr 90px 90px 100px;
+  font-size: 11px;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  padding: 8px 0;
+}
+
+.invoice-doc__freight {
+  font-size: 11px;
+  color: #666;
+  margin-top: 8px;
+  text-align: right;
+}
+
+.invoice-doc__total-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.invoice-doc__total {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.text-strong {
+  font-weight: 700;
+}
+
+.text-strong-danger {
+  font-weight: 700;
+  color: v.$color-danger;
+}
+
+.kv-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &.kv-list--tight {
+    gap: 6px;
+  }
+}
+
+.kv-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+
+  & + & {
+    margin-top: 9px;
+  }
+
+  &.kv-row--button {
+    width: 100%;
+    text-align: left;
+  }
+
+  &.kv-row--divider {
+    border-top: 1px solid v.$color-border-light;
+    padding-top: 8px;
+  }
+}
+
+.kv-row__label {
+  color: v.$color-text-muted;
+}
+
+.kv-row__value {
+  font-weight: 600;
+  color: v.$color-text;
+}
+
+.discrepancy-panel {
+  border: 1px solid v.$color-danger-tint-border;
+  background: v.$color-danger-tint;
+  border-radius: v.$radius-lg;
+  padding: 14px 16px;
+}
+
+.discrepancy-panel__title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: v.$color-danger;
+  margin-bottom: 8px;
+}
+
+.ok-panel {
+  border: 1px solid v.$color-accent-tint-border;
+  background: v.$color-accent-tint;
+  border-radius: v.$radius-lg;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: v.$color-success;
+  font-weight: 600;
+  font-size: 13px;
+
+  &.ok-panel--spaced {
+    margin-bottom: 18px;
+  }
+}

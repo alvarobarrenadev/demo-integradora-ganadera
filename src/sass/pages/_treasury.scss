@@ -1,0 +1,44 @@
+@use '@abstracts/variables' as v;
+
+.forecast-grid {
+  display: grid;
+  font-size: 12px;
+}
+
+.forecast-grid--weeks4 {
+  grid-template-columns: 120px repeat(4, 110px);
+  min-width: 560px;
+}
+
+.forecast-grid__label {
+  color: v.$color-text-muted;
+  padding: 8px 0;
+
+  &--strong {
+    font-weight: 700;
+    color: v.$color-text;
+  }
+}
+
+.forecast-grid__cell {
+  text-align: center;
+  padding: 8px 0;
+  font-weight: 600;
+
+  &--muted {
+    color: v.$color-text-faint;
+  }
+
+  &--positive {
+    color: v.$color-success;
+  }
+
+  &--negative {
+    color: v.$color-danger;
+  }
+}
+
+.forecast-grid__row--divider .forecast-grid__cell,
+.forecast-grid__row--divider .forecast-grid__label {
+  border-top: 1px solid v.$color-border-light;
+}

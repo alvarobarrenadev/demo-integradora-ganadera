@@ -1,0 +1,104 @@
+@use '@abstracts/variables' as v;
+
+// Shared responsive two-column layouts — stack to one column below tablet-horizontal
+// so nothing forces a fixed-width column narrower than the viewport.
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+
+  @media (max-width: v.$bp-tablet-horizontal) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.grid-aside-left {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 16px;
+  align-items: start;
+
+  @media (max-width: v.$bp-tablet-horizontal) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.grid-aside-right {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 18px;
+  align-items: start;
+
+  @media (max-width: v.$bp-tablet-horizontal) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+
+  @media (max-width: v.$bp-tablet-horizontal) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media (max-width: v.$bp-tablet) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.grid-3-tight {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+
+  @media (max-width: v.$bp-tablet) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.scroll-x {
+  overflow-x: auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+
+  &.page-header--with-subtitle {
+    margin-bottom: 2px;
+  }
+}
+
+.page-header__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.page-title {
+  font-size: 20px;
+}
+
+// Shared header for detail pages (invoice/ceba/integrated): title+subtitle
+// on the left, a single action (usually "Volver") on the right.
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  &.detail-header--tight {
+    align-items: center;
+    margin: 8px 0 18px;
+  }
+}

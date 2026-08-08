@@ -1,0 +1,62 @@
+@use '@abstracts/variables' as v;
+
+.card {
+  border: 1px solid v.$color-border;
+  border-radius: v.$radius-lg;
+  background: v.$color-surface;
+  padding: v.$space-4 v.$space-5;
+}
+
+.card--tight {
+  padding: v.$space-4;
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
+  margin-bottom: v.$space-6;
+}
+
+.kpi-card {
+  border: 1px solid v.$color-border;
+  border-radius: v.$radius-lg;
+  padding: 14px 16px;
+  background: v.$color-surface;
+}
+
+.kpi-card__label {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: v.$color-text-faint;
+  margin-bottom: 8px;
+
+  &.kpi-card__label--flush {
+    margin-bottom: 0;
+  }
+  text-transform: uppercase;
+}
+
+.kpi-card__value {
+  font-size: 22px;
+  font-weight: 700;
+  color: v.$color-text;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.kpi-card__value--warning {
+  color: v.$color-warning-strong;
+}
+
+.kpi-card__value--sm {
+  font-size: 15px;
+}
+
+.kpi-card__hint {
+  font-size: 11px;
+  color: v.$color-text-faint;
+  margin-top: 4px;
+}

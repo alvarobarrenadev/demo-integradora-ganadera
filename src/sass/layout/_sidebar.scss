@@ -1,0 +1,167 @@
+@use '@abstracts/variables' as v;
+
+.sidebar {
+  width: v.$sidebar-width;
+  flex: none;
+  background: v.$color-surface;
+  border-right: 1px solid v.$color-border;
+  display: flex;
+  flex-direction: column;
+  padding: v.$space-4 v.$space-3;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+
+  // Below tablet-horizontal width, the sidebar becomes an off-canvas drawer:
+  // hidden by default, slid in via .is-open, toggled from the header's menu button.
+  @media (max-width: v.$bp-tablet-horizontal) {
+    position: fixed;
+    inset: 0 auto 0 0;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease-out;
+    box-shadow: v.$shadow-modal;
+
+    &.is-open {
+      transform: translateX(0);
+    }
+  }
+}
+
+.sidebar-backdrop {
+  display: none;
+
+  @media (max-width: v.$bp-tablet-horizontal) {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 24, 22, 0.35);
+    border: none;
+    z-index: 39;
+    cursor: default;
+  }
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px 18px;
+}
+
+.sidebar-brand__mark {
+  width: 32px;
+  height: 32px;
+  border-radius: v.$radius-md;
+  background: v.$color-accent;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: v.$color-accent-tint;
+}
+
+.sidebar-brand__name {
+  font-size: 14px;
+  font-weight: 700;
+  color: v.$color-text;
+  line-height: 1.2;
+}
+
+.sidebar-brand__company {
+  font-size: 9.5px;
+  color: v.$color-text-faint;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: v.$radius-md;
+  font-size: 13px;
+  font-weight: 600;
+  color: v.$color-text-body;
+  text-decoration: none;
+
+  svg {
+    flex: none;
+    stroke: v.$color-text-faint;
+  }
+
+  &:hover {
+    background: v.$color-bg;
+  }
+
+  &.is-active {
+    background: v.$color-accent-tint;
+    color: v.$color-accent;
+
+    svg {
+      stroke: v.$color-accent;
+    }
+  }
+}
+
+.sidebar-spacer {
+  flex: 1;
+}
+
+.sidebar-footer {
+  border-top: 1px solid v.$color-border-light;
+  padding-top: v.$space-2;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-reset {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  color: v.$color-text-muted;
+  font-size: 12.5px;
+  border-radius: v.$radius-md;
+
+  &:hover {
+    background: v.$color-bg;
+  }
+}
+
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 10px 4px;
+  margin-top: v.$space-1;
+}
+
+.sidebar-user__name {
+  font-size: 13px;
+  font-weight: 600;
+  color: v.$color-text;
+}
+
+.avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: v.$color-accent-tint;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: v.$color-accent;
+}
