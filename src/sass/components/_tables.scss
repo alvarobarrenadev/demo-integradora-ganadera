@@ -74,3 +74,59 @@
   color: v.$color-text-muted;
   font-size: 12.5px;
 }
+
+@media (max-width: v.$bp-tablet) {
+  .consumption-summary {
+    overflow-x: hidden;
+
+    .data-table {
+      min-width: 0;
+    }
+
+    thead {
+      display: none;
+    }
+
+    tbody,
+    tr,
+    td {
+      display: block;
+    }
+
+    tbody tr {
+      padding: 12px 14px;
+      border-bottom: 1px solid v.$color-border-light;
+    }
+
+    tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    tbody td {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 3px 0;
+      border: 0;
+
+      &::before {
+        content: attr(data-label);
+        color: v.$color-text-faint;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.045em;
+        text-transform: uppercase;
+      }
+
+      &:first-child {
+        display: block;
+        padding-bottom: 8px;
+        text-align: left;
+
+        &::before {
+          display: none;
+        }
+      }
+    }
+  }
+}

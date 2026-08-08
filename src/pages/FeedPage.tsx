@@ -124,7 +124,7 @@ function ConsumptionTable({ title, rows }: { title: string; rows: Array<Consumpt
   return (
     <div className="card">
       <div className="section-title">{title}</div>
-      <div className="data-table-wrap">
+      <div className="data-table-wrap consumption-summary">
         <table className="data-table">
           <thead><tr><th>Nombre</th><th className="cell-num">Kg</th><th className="cell-num">Total</th><th className="cell-num">€/kg</th></tr></thead>
           <tbody>
@@ -132,9 +132,9 @@ function ConsumptionTable({ title, rows }: { title: string; rows: Array<Consumpt
             {rows.map((row) => (
               <tr key={row.label}>
                 <td className="cell-strong">{row.label}</td>
-                <td className="cell-num">{fmtNumber(row.kg)}</td>
-                <td className="cell-num">{fmtEUR(row.base + row.freight)}</td>
-                <td className="cell-num">{fmtPricePerKg((row.base + row.freight) / row.kg)}</td>
+                <td className="cell-num" data-label="Kg">{fmtNumber(row.kg)}</td>
+                <td className="cell-num" data-label="Total">{fmtEUR(row.base + row.freight)}</td>
+                <td className="cell-num" data-label="€/kg">{fmtPricePerKg((row.base + row.freight) / row.kg)}</td>
               </tr>
             ))}
           </tbody>
